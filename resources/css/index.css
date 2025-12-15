@@ -1,0 +1,8 @@
+.navBar{
+    background: rgb(4, 73, 77) !important;
+}
+.form-outline input:focus + label,
+.form-outline input:not(:placeholder-shown) + label {
+    transform: translateY(-1.5rem) scale(0.8);
+    color: #1976d2;
+}

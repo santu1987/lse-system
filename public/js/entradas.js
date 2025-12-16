@@ -1,4 +1,16 @@
 $(document).ready(function () {
+    //Tabla de entradas
+    $('#tablaEntradas').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            },
+            pageLength: 10,
+            order: [[0, 'desc']],
+            columnDefs: [
+                { orderable: false, targets: 4 } // desactiva orden en columna de acciones
+            ]
+    });
+
     //guardar
     $('#entradaForm').on('submit', function (e) {
         e.preventDefault();
@@ -41,19 +53,21 @@ $(document).ready(function () {
     //editar
     $('#updateEntradaForm').on('submit', function (e) {
         e.preventDefault();
+        alert("aqui, editar!");
         $.ajax({
             url: updateUrl, // viene de Blade
-            type: "POST",
+            type: "PUT",
             data: $(this).serialize(),
             headers: {
                 'X-CSRF-TOKEN': $('input[name="_token"]').val()
             },
 
             success: function (response) {
+                console.log(response)
                 // Mostrar mensaje
                 $('#mensaje').html('<div class="alert alert-success">Entrada editada correctamente</div>');
                 // Limpiar los campos del formulario
-                    $('#entradaForm')[0].reset();
+                    $('#updateEntradaForm')[0].reset();
 
                     // Mantener el mensaje visible por 10 segundos y luego limpiarlo
                     setTimeout(function () {
@@ -80,22 +94,42 @@ $(document).ready(function () {
     // Eliminar
     $('.delete-btn').on('click', function () {
         let id = $(this).data('id');
-        if (confirm("¿Seguro que deseas eliminar esta entrada?")) {
-           $.ajax({
-                url: "/entradas_le/" + id,
-                type: "DELETE",
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function (response) {
-                    $('#mensaje').html('<div class="alert alert-success">Entrada eliminada correctamente</div>');
-                    $('#row-' + id).remove();
-                },
-                error: function (xhr) {
-                    console.error(xhr.responseText);
-                    $('#mensaje').html('<div class="alert alert-danger">Error al eliminar</div>');
-                }
-            });
-        }
+        let url = $(this).data('url');
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará la entrada de forma permanente",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: 'rgb(23, 162, 184)',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url:url,
+                    type: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function (response) {
+                        Swal.fire(
+                            'Eliminado',
+                            'La entrada fue eliminada correctamente.',
+                            'success'
+                        );
+                        $('#row-' + id).remove();
+                    },
+                    error: function (xhr) {
+                        console.error(xhr.responseText);
+                        Swal.fire(
+                            'Error',
+                            'Hubo un problema al eliminar la entrada.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
     });
 });

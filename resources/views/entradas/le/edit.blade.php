@@ -3,36 +3,58 @@
 @section('title', 'Nueva Entrada LE')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">
-        <span class="material-icons align-middle me-2">note_add</span>
-        Editar Entrada Lengua Española
-    </h1>
-    <form id="updateEntradaForm" name="updateEntradaForm    ">
-        @csrf
-        <div class="row">
-            <div class="mb-3 col-12">
-                <label for="entrada" class="form-label">Entrada</label>
-                <input type="text" name="entrada" id="entrada" class="form-control" required>
-            </div>
-            {{-- Campo numérico Orden --}}
-            <div class="mb-3 col-6 col-lg-6 co-lmd-6 col-sm-12 col-xs-12">
-                <label for="orden" class="form-label">Orden</label>
-                <input type="number" name="orden" id="orden" class="form-control" min="1" required>
+<div class="content">
+    <div class="container-fluid">
+        <!-- Card contenedora -->
+        <div class="card card-info card-outline">
+            <div class="card-header bg-info text-white text-center rounded-top">
+                <h3 class="card-title m-0">
+                    <i class="fas fa-edit mr-2"></i> Editar Entrada Lengua Española
+                </h3>
             </div>
 
-            {{-- Datepicker Fecha de Modificación --}}
-            <div class="mb-3 col-6 col-lg-6 co-lmd-6 col-sm-12 col-xs-12">
-                <label for="fecha_modificacion" class="form-label">Fecha de Modificación</label>
-                <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ date('Y-m-d') }}">
-            </div>
+            <form id="updateEntradaForm" name="updateEntradaForm">
+                @csrf
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Campo Entrada -->
+                        <div class="form-group col-12">
+                            <label for="entrada">Entrada</label>
+                            <input type="text" name="entrada" id="entrada" class="form-control" placeholder="Ingrese la entrada" required  value="{{ old('entrada', $entrada->entrada) }}">
+                        </div>
+
+                        <!-- Campo Orden -->
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="orden">Orden</label>
+                            <input type="number" name="orden" id="orden" class="form-control" min="1" placeholder="Número de orden" required value="{{ old('orden', $entrada->orden) }}" >
+                        </div>
+
+                        <!-- Campo Fecha de Modificación -->
+                        <div class="form-group col-md-6 col-sm-12">
+                            <label for="fecha_modificacion">Fecha de Modificación</label>
+                            <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ old('fecha_modificacion', \Carbon\Carbon::parse($entrada->fecha_modificacion)->format('Y-m-d')) }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer con botones -->
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Actualizar
+                    </button>
+                    <a href="{{ route('entradas_le.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                    <a href="{{ route('entradas_le.index') }}" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
+                </div>
+            </form>
         </div>
-        {{-- Agrega aquí los demás campos según tu tabla --}}
-        <button type="submit" class="btn btn-success">Actualizar</button>
-        <a href="{{ route('entradas_le.index') }}" class="btn btn-secondary">Salir</a>
-        <a href="{{ route('entradas_le.index') }}" class="btn btn-danger">Eliminar</a>
-        <div id="mensaje"></div>
-    </form>
+
+        <!-- Mensajes -->
+        <div id="mensaje" class="mt-3"></div>
+    </div>
 </div>
 @endsection
 @push('scripts')

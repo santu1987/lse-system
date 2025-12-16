@@ -20,6 +20,9 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::view('/usuarios', 'admin.users.index')->name('admin.users.index');
         // ...otras vistas/recursos
+        /***
+         * Entradas
+         */
         // Listar todas las entradas (index)
         Route::get('/entradas_le', [EntradaLEController::class, 'index'])->name('entradas_le.index');
         // Mostrar formulario (create)
@@ -35,8 +38,14 @@ Route::middleware(['auth'])->group(function () {
             ->name('entradas_le.edit');
         // Update de la entrada
         Route::put('/entradas_le/{id}', [EntradaLEController::class, 'update'])->name('entradas_le.update');
-
+        /**
+         * Entradas LSE
+         */
         Route::get('/entradas/lse', [EntradaLSEController::class, 'index'])->name('entradas.lse');
+        Route::get('/entradas_lse/create', [EntradaLEController::class, 'create'])->name('entradas_lse.create');
+        /**
+         * 
+         */
         Route::view('/signo-del-dia', 'admin.signo')->name('signo.dia');
         Route::view('/notificaciones', 'admin.notificaciones')->name('notificaciones');
         Route::resource('/categorias', CategoriaController::class)->only(['index','create','store']);

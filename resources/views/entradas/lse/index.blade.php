@@ -3,62 +3,90 @@
 @section('title', 'Entradas LSE')
 
 @section('content')
-<div class="container">
-    <h1 class="mb-4">Entradas LSE</h1>
+<div class="content">
+    <div class="container-fluid">
+        <!-- Card contenedora -->
+        <div class="card card-info card-outline">
+            <div class="card-header bg-info text-white text-center rounded-top">
+                <h3 class="card-title m-0">
+                    <i class="fas fa-sign-language mr-2"></i> Entradas LSE
+                </h3>
+            </div>
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Fecha</th>
-                <th>ID Entrada LE</th>
-                <th>Glosario</th>
-                <th>Nombres Propios</th>
-                <th>Foto</th>
-                <th>Video</th>
-                <th>Nº Acepciones</th>
-                <th>Orden</th>
-                <th>Tiene Foto</th>
-                <th>Tiene Video</th>
-                <th>Tiene Acepción</th>
-                <th>Tiene Ejemplo</th>
-                <th>Fecha Guardado</th>
-                <th>Oculto en Web</th>
-                <th>Medida Imagen</th>
-                <th>Entrada Masculino</th>
-                <th>Entrada Femenino</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($entradas as $entrada)
-                <tr>
-                    <td>{{ $entrada->id }}</td>
-                    <td>{{ $entrada->date_time }}</td>
-                    <td>{{ $entrada->id_entrada_le }}</td>
-                    <td>{{ $entrada->glosario }}</td>
-                    <td>{{ $entrada->nombres_propios }}</td>
-                    <td>{{ $entrada->foto }}</td>
-                    <td>{{ $entrada->video }}</td>
-                    <td>{{ $entrada->num_acepciones }}</td>
-                    <td>{{ $entrada->orden }}</td>
-                    <td>{{ $entrada->tiene_foto ? 'Sí' : 'No' }}</td>
-                    <td>{{ $entrada->tiene_video ? 'Sí' : 'No' }}</td>
-                    <td>{{ $entrada->tiene_acepcion ? 'Sí' : 'No' }}</td>
-                    <td>{{ $entrada->tiene_ejemplo ? 'Sí' : 'No' }}</td>
-                    <td>{{ $entrada->fecha_guardado }}</td>
-                    <td>{{ $entrada->oculto_en_web_diccionario_lse ? 'Sí' : 'No' }}</td>
-                    <td>{{ $entrada->medida_imagen }}</td>
-                    <td>{{ $entrada->entrada_masculino }}</td>
-                    <td>{{ $entrada->entrada_femenino }}</td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="18" class="text-center">No hay entradas registradas.</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+            <div class="card-body">
+                <!-- Botón crear nueva entrada -->
+                <a href="{{ route('entradas_lse.create') }}" class="btn btn-info btn-sm mb-5">
+                    <i class="fas fa-plus"></i> Nueva Entrada
+                </a>
+                <!-- Tabla con estilo AdminLTE -->
+                <table id="tablaEntradasLse" name="tablaEntradasLse" class="table table-bordered table-hover">
+                    <thead class="">
+                        <tr>
+                            <th>ID</th>
+                            <th>Entrada</th>
+                            <th>No Estándar</th>
+                            <th>Acepciones</th>
+                            <th>Orden</th>
+                            <th>Modificado</th>
+                            <th>Oculto en web</th>
+                            <th>Foto</th>
+                            <th>Video</th>
+                            <th>Acepción</th>
+                            <th>Ejemplo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($entradas as $entrada)
+                            <tr>
+                                <td>{{ $entrada->id }}</td>
+                                <td>Mostrar entrada</td>
+                                <td>{{ $entrada->glosario }}</td>
+                                <td>{{ $entrada->num_acepciones }}</td>
+                                <td>{{ $entrada->orden }}</td>
+                                <td>{{ \Carbon\Carbon::parse($entrada->fecha_guardado)->format('d-m-Y') }}</td>
+                                <td>
+                                    <span class="badge {{ $entrada->oculto_en_web_diccionario_lse ? 'badge-danger' : 'badge-success' }}">
+                                        {{ $entrada->oculto_en_web_diccionario_lse ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {{ $entrada->tiene_foto ? 'badge-info' : 'badge-secondary' }}">
+                                        {{ $entrada->tiene_foto ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {{ $entrada->tiene_video ? 'badge-info' : 'badge-secondary' }}">
+                                        {{ $entrada->tiene_video ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {{ $entrada->tiene_acepcion ? 'badge-primary' : 'badge-secondary' }}">
+                                        {{ $entrada->tiene_acepcion ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge {{ $entrada->tiene_ejemplo ? 'badge-primary' : 'badge-secondary' }}">
+                                        {{ $entrada->tiene_ejemplo ? 'Sí' : 'No' }}
+                                    </span>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="11" class="text-center">No hay entradas registradas.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
 
-    {{ $entradas->links() }}
+            <div class="card-footer clearfix">
+                <!-- Paginación con estilo AdminLTE -->
+                {{ $entradas->links('pagination::bootstrap-4') }}
+            </div>
+        </div>
+    </div>
 </div>
 @endsection
+@push('scripts')
+<script src="{{ asset('js/entradas_lse.js') }}"></script>
+@endpush

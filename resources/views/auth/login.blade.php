@@ -5,6 +5,11 @@
 @section('content')
 
 <div class="row justify-content-center">
+    <div class="col-lg-12  mt-5">
+        <h1 class="text-center">
+            <span class="brand-text font-weight-light"><i class="nav-icon fas fa-book"></i> DILSE</span>
+        </h1>
+    </div>
     <div class="col-md-5">
         <div class="card shadow-sm">
             <div class="card-body p-4">
@@ -45,6 +50,6 @@
     </div>
 </div>
 <footer class="text-center">
-    <strong>&copy; {{ date('Y') }} DILSE.</strong> Todos los derechos reservados.
+    <strong>&copy; {{ date('Y') }} DILSE.</strong> Todos los derechos reservados. Desarrollado por ReÁnima Soluciones
 </footer>
 @endsection

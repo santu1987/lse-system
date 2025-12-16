@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EntradaLEController;
 use App\Http\Controllers\EntradaLSEController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -51,7 +52,20 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('/categorias', CategoriaController::class)->only(['index','create','store']);
         Route::view('/informes', 'admin.informes')->name('informes');
         Route::view('/productos', 'admin.productos')->name('productos');
-        Route::view('/usuarios', 'admin.usuarios')->name('usuarios');
-
+        /**
+         * En desarrollo
+         */
+        // Vista temporal de "En desarrollo"
+        Route::view('/signo-del-dia', 'endesarrollo')->name('signo.dia');
+        Route::view('/notificaciones', 'endesarrollo')->name('notificaciones');
+        Route::view('/informes', 'endesarrollo')->name('informes');
+        Route::view('/productos', 'endesarrollo')->name('productos');
+        Route::view('/perfil', 'endesarrollo')->name('perfil');
+        Route::view('/configuracion', 'endesarrollo')->name('configuracion');
+        /**
+         * Usuarios
+         */
+        Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios');
+        
     });
 });

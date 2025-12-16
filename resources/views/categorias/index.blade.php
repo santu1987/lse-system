@@ -15,7 +15,7 @@
 
             <div class="card-body">
                 <!-- Botón crear nueva categoría -->
-                <a href="{{ route('categorias.create') }}" class="btn btn-info btn-sm mb-3">
+                <a href="{{ route('categorias.create') }}" class="btn btn-info   btn-sm mb-3">
                     <i class="fas fa-plus"></i> Nueva Categoría
                 </a>
 

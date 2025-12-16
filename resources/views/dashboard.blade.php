@@ -17,29 +17,46 @@
     </div>
 
     {{-- Ejemplo de tarjetas rápidas --}}
-    <div class="col-md-4">
-        <div class="card border-0">
-            <div class="card-body">
-                <h3 class="card-subtitle mb-2 text-muted"><i class="fas fa-map-marker-alt"></i> Entradas LE</h3>
-                <h3 class="mb-0"></h3>
-            </div>
+    <div class="row col-12">
+        <!-- Entradas LE -->
+        <div class="col-md-4">
+            <a href="{{ route('entradas_le.index') }}" class="text-white text-decoration-none">
+                <div class="card border-0 shadow-sm card-hover bg-info">
+                    <div class="card-body text-center">
+                        <h3 class="card-subtitle mb-2 text-white">
+                            <i class="fas fa-map-marker-alt"></i> Entradas LE
+                        </h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Entradas LSE -->
+        <div class="col-md-4">
+            <a href="{{ route('entradas.lse') }}" class="text-white text-decoration-none">
+                <div class="card border-0 shadow-sm card-hover bg-danger">
+                    <div class="card-body text-center">
+                        <h3 class="card-subtitle mb-2 text-white">
+                            <i class="fas fa-hand-point-up"></i> Entradas LSE
+                        </h3>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Categorías -->
+        <div class="col-md-4">
+            <a href="{{ route('categorias.index') }}" class="text-white text-decoration-none">
+                <div class="card border-0 shadow-sm card-hover bg-success">
+                    <div class="card-body text-center">
+                        <h3 class="card-subtitle mb-2 text-white">
+                            <i class="fas fa-list"></i> Categorías
+                        </h3>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card border-0">
-            <div class="card-body">
-                <h3 class="card-subtitle mb-2 text-muted"><i class="fas fa-hand-point-up"></i> Entradas LSE</h3>
-                <h3 class="mb-0"></h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card border-0">
-            <div class="card-body">
-                <h3 class="card-subtitle mb-2 text-muted"><i class="fas fa-list"></i> Categorias</h3>
-                <h3 class="mb-0"></h3>
-            </div>
-        </div>
-    </div>
+
 </div>
 @endsection

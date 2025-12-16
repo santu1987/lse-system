@@ -33,10 +33,10 @@
                             <i class="fas fa-user mr-1"></i> Usuario
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="{{ url('/perfil') }}" class="dropdown-item">
+                            <a href="{{ route('perfil') }}" class="dropdown-item">
                                 <i class="fas fa-id-card mr-2"></i> Perfil
                             </a>
-                            <a href="{{ url('/configuracion') }}" class="dropdown-item">
+                            <a href="{{ route('configuracion') }}" class="dropdown-item">
                                 <i class="fas fa-cog mr-2"></i> Configuración
                             </a>
                             <div class="dropdown-divider"></div>
@@ -52,7 +52,7 @@
             </nav>
             {{-- SIDEBAR --}}
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
-                <a href="{{ url('/') }}" class="brand-link text-left">
+                <a href="{{ url('/') }}" class="brand-link text-left" style="">
                     <span class="brand-text font-weight-light"><i class="nav-icon fas fa-book"></i> DILSE</span>
                 </a>
                 <div class="sidebar">
@@ -128,7 +128,7 @@
         @auth 
         {{-- FOOTER --}}
         <footer class="main-footer text-center">
-            <strong>&copy; {{ date('Y') }} DILSE.</strong> Todos los derechos reservados.
+            <strong>&copy; {{ date('Y') }} DILSE.</strong> Todos los derechos reservados. Desarrollado por ReÁnima Soluciones
         </footer>
      @endauth
     </div>

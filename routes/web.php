@@ -20,7 +20,22 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('admin')->group(function () {
         Route::view('/usuarios', 'admin.users.index')->name('admin.users.index');
         // ...otras vistas/recursos
-        Route::get('/entradas/le', [EntradaLEController::class, 'index'])->name('entradas.le');
+        // Listar todas las entradas (index)
+        Route::get('/entradas_le', [EntradaLEController::class, 'index'])->name('entradas_le.index');
+        // Mostrar formulario (create)
+        Route::get('/entradas_le/create', [EntradaLEController::class, 'create'])->name('entradas_le.create');
+        // Guardar nueva entrada (store)
+        Route::post('/entradas_le', [EntradaLEController::class, 'store'])->name('entradas_le.store');
+        // Actualizar entrada existente (update)
+        Route::put('/entradas_le/{id}', [EntradaLEController::class, 'update'])->name('entradas_le.update');
+        // Eliminar entrada (delete)
+        Route::delete('/entradas_le/{id}', [EntradaLEController::class, 'destroy'])->name('entradas_le.destroy');
+        // Mostrar formulario de edición
+        Route::get('/entradas_le/{id}/edit', [EntradaLEController::class, 'edit'])
+            ->name('entradas_le.edit');
+        // Update de la entrada
+        Route::put('/entradas_le/{id}', [EntradaLEController::class, 'update'])->name('entradas_le.update');
+
         Route::get('/entradas/lse', [EntradaLSEController::class, 'index'])->name('entradas.lse');
         Route::view('/signo-del-dia', 'admin.signo')->name('signo.dia');
         Route::view('/notificaciones', 'admin.notificaciones')->name('notificaciones');

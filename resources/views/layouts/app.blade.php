@@ -8,8 +8,6 @@
     {{-- Bootstrap 5 (si tu template Material ya lo trae, puedes omitir este) --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    {{-- Material Design for Bootstrap (MDB) --}}
-    <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.2.0/mdb.min.css" rel="stylesheet"/>-->
     {{-- Iconos Material --}}
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
 
@@ -19,6 +17,7 @@
     <style>
         .brand { font-weight: 600; letter-spacing: .5px; }
     </style>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
@@ -101,7 +100,7 @@
                     <ul class="nav flex-column">
 
                         <li class="nav-item mb-2">
-                            <a class="nav-link text-white" href="{{ route('entradas.le') }}">
+                            <a class="nav-link text-white" href="{{ route('entradas_le.index') }}">
                                 <span class="material-icons me-2">book</span>
                                 Entradas LE
                             </a>
@@ -175,15 +174,11 @@
 
     {{-- JS Bootstrap / MDB --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-    <link href="{{ asset('css/index.css') }}" rel="stylesheet"/>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/9.2.0/mdb.umd.min.js"></script>-->
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.form-outline').forEach((formOutline) => {
-            new mdb.Input(formOutline).init();
-        });
-    });
+     {{-- jQuery --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Scripts específicos de cada vista -->
+    @stack('scripts')
     </script>
 </body>
 </html>

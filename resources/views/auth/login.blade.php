@@ -36,7 +36,7 @@
                         <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
+                    <button type="submit" class="btn btn-success w-100">
                         <span class="material-icons align-middle" style="font-size:18px;">login</span> Ingresar
                     </button>
                 </form>

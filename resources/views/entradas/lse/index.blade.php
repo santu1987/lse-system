@@ -33,13 +33,14 @@
                             <th>Video</th>
                             <th>Acepción</th>
                             <th>Ejemplo</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse($entradas as $entrada)
                             <tr>
                                 <td>{{ $entrada->id }}</td>
-                                <td>Mostrar entrada</td>
+                                <td>{{  $entrada->entradaLE?->entrada ?? 'Sin relación'  }}</td>
                                 <td>{{ $entrada->glosario }}</td>
                                 <td>{{ $entrada->num_acepciones }}</td>
                                 <td>{{ $entrada->orden }}</td>
@@ -68,6 +69,19 @@
                                     <span class="badge {{ $entrada->tiene_ejemplo ? 'badge-primary' : 'badge-secondary' }}">
                                         {{ $entrada->tiene_ejemplo ? 'Sí' : 'No' }}
                                     </span>
+                                </td>
+                                <td>
+                                    <a href="" 
+                                    class="btn btn-info btn-sm" 
+                                    title="Editar entrada">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-info btn-sm delete-btn" 
+                                            data-url="" 
+                                            data-id=""
+                                            title="Eliminar entrada">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @empty

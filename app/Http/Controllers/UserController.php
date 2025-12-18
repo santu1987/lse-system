@@ -18,4 +18,20 @@ class UserController extends Controller
         // Retornar la vista con los usuarios
         return view('usuarios.index', compact('users'));
     }
+
+    /**
+     * Create
+     *  */    
+    public function create()
+    {
+        return view('usuarios.create');
+    }
+     /**
+     * Store
+     */
+    public function store(Request $request)
+    {
+
+    }
+        
 }

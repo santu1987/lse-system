@@ -54,9 +54,9 @@
                 <!-- Mensajes -->
                 <div id="mensaje" class="mt-3"></div>
             </div>
+            <!-- Paginación con estilo AdminLTE -->
 
             <div class="card-footer clearfix">
-                <!-- Paginación con estilo AdminLTE -->
                 {{ $entradas->links('pagination::bootstrap-4') }}
             </div>
         </div>

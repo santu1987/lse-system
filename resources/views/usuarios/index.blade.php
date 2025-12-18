@@ -15,7 +15,7 @@
 
             <div class="card-body">
                 <!-- Botón crear nueva entrada -->
-                <a href="" class="btn btn-info btn-sm mb-5">
+                <a  href="{{ route('usuarios.create') }}" class="btn btn-info btn-sm mb-5">
                     <i class="fas fa-plus"></i> Nuevo usuario
                 </a>
                 <!-- Tabla con estilo AdminLTE -->
@@ -29,6 +29,7 @@
                             <th>Bloqueado</th>
                             <th>Acceso Productos</th>
                             <th>Ordenar Entradas</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -48,6 +49,19 @@
                                     <span class="badge {{ $user->permiso_ordenar ? 'badge-info' : 'badge-secondary' }}">
                                         {{ $user->permiso_ordenar ? 'Sí' : 'No' }}
                                     </span>
+                                </td>
+                                <td>
+                                    <a href="" 
+                                    class="btn btn-info btn-sm" 
+                                    title="Editar entrada">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-info btn-sm delete-btn" 
+                                            data-url="" 
+                                            data-id=""
+                                            title="Eliminar entrada">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </td>
                             </tr>
                         @empty

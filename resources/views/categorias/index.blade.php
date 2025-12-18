@@ -26,6 +26,7 @@
                             <th style="width: 10%">ID</th>
                             <th style="width: 50%">Categoría</th>
                             <th style="width: 40%">Fecha de modificación</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +35,19 @@
                                 <td>{{ $categoria->id }}</td>
                                 <td>{{ $categoria->categoria }}</td>
                                 <td>{{ \Carbon\Carbon::parse($categoria->date_time)->format('d-m-Y') }}</td>
+                                <td>
+                                    <a href="" 
+                                    class="btn btn-info btn-sm" 
+                                    title="Editar entrada">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button class="btn btn-info btn-sm delete-btn" 
+                                            data-url="" 
+                                            data-id=""
+                                            title="Eliminar entrada">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
                         @empty
                             <tr>

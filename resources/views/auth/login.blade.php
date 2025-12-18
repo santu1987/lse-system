@@ -41,7 +41,7 @@
                         <a href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-success w-100">
+                    <button type="submit" class="btn btn-info w-100">
                         <i class="fas fa-sign-in-alt"></i> Ingresar
                     </button>
                 </form>

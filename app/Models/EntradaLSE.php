@@ -33,9 +33,12 @@ class EntradaLSE extends Model
     // Si tu tabla no usa created_at / updated_at
     public $timestamps = false;
 
-    // Relación con EntradaLE
+    // Relación manual con lse_entradas_lengua_espanola
     public function entradaLE()
     {
-        return $this->belongsTo(EntradaLE::class, 'id_entrada_le');
+        return $this->hasOne(EntradaLE::class, 'id', 'id_entrada_le');
+        // 'id' es la PK de EntradaLE
+        // 'id_entrada_le' es el campo en EntradaLSE que apunta a esa PK
     }
+
 }

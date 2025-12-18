@@ -26,7 +26,7 @@
                         <!-- Campo Orden -->
                         <div class="form-group col-md-6 col-sm-12">
                             <label for="orden">Orden</label>
-                            <input type="number" name="orden" id="orden" class="form-control" min="1" placeholder="Número de orden" required>
+                            <input type="number" name="orden" id="orden" class="form-control" min="1" placeholder="Número de orden">
                         </div>
 
                         <!-- Campo Fecha de Modificación -->
@@ -35,6 +35,7 @@
                             <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
+                    <input type="hidden" id="idEntrada" name="idEntrada">
                 </div>
 
                 <!-- Footer con botones -->
@@ -50,10 +51,95 @@
                     </a>
                 </div>
             </form>
+            <!-- Mensajes -->
+            <div id="mensaje" class="mt-3"></div>
+       
+            <!--Acepciones -->
+            <div class="card-body">
+                <hr>
+                <h4 class="text-info">
+                    <i class="fas fa-book mr-2"></i> Acepciones
+                </h4>
+
+                <!-- Buscador y botón nueva acepción -->
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Buscar acepción...">
+                            <div class="input-group-append">
+                                <button class="btn btn-info" type="button">
+                                    <i class="fas fa-search"></i> Consultar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="button" id="btnNuevaFila" class="btn btn-dark">
+                            <i class="fas fa-plus"></i> Nueva Acepción
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabla de acepciones -->
+                <table class="table table-bordered table-sm">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width: 40px">N°</th>
+                            <th>Acepción</th>
+                            <th>Ejemplo</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Def. propia</th>
+                            <th style="width: 100px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($acepciones as $index => $acepcion)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $acepcion->texto }}</td>
+                            <td>
+                                <input type="text" name="ejemplo_{{ $acepcion->id }}" class="form-control form-control-sm" placeholder="Ejemplo...">
+                            </td>
+                            <td>
+                                <div class="d-flex">
+                                    <select name="categoria_{{ $acepcion->id }}" class="form-control form-control-sm">
+                                        <option value="">Seleccionar</option>
+                                        @foreach($categorias as $cat)
+                                            <option value="{{ $cat->id }}">{{ $cat->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                    <a href="" class="btn btn-link btn-sm text-info ml-2">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </div>
+                            </td>
+                            <td>{{ $acepcion->fecha ?? \Carbon\Carbon::now()->format('Y-m-d') }}</td>
+                            <td class="text-center">
+                                <input type="checkbox" name="def_propia_{{ $acepcion->id }}">
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-success" id="btnGuardarAcepciones" name="btnGuardarAcepciones">
+                        <i class="fas fa-plus"></i> Guardar
+                    </button>
+                </div>  
+                <!-- Mensajes -->
+                <div id="mensaje_acepciones" class="mt-3"></div>  
+            </div>
+           
+            <!--Fin de acepciones -->
         </div>
 
-        <!-- Mensajes -->
-        <div id="mensaje" class="mt-3"></div>
+        
     </div>
 </div>
 @endsection
@@ -62,6 +148,12 @@
     <script>
         const storeUrl = "{{ route('entradas_le.store') }}";
         const indexUrl = "{{ route('entradas_le.index') }}";
+        const url_store_acepciones= "{{ route('acepciones_store') }}";
+    </script>
+    
+    <script>
+    // Laravel envía las categorías como JSON
+        window.categorias = @json($categorias);
     </script>
 
     {{-- Archivo JS propio --}}

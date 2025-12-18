@@ -43,13 +43,25 @@ Route::middleware(['auth'])->group(function () {
          * Entradas LSE
          */
         Route::get('/entradas/lse', [EntradaLSEController::class, 'index'])->name('entradas.lse');
-        Route::get('/entradas_lse/create', [EntradaLEController::class, 'create'])->name('entradas_lse.create');
+        Route::get('/entradas_lse/create', [EntradaLSEController::class, 'create'])->name('entradas_lse.create');
+        Route::post('/entradas_lse', [EntradaLSEController::class, 'store'])->name('entradas_lse.store');
+        /**
+         * Acepciones
+         */
+        Route::post('/acepciones/store', [EntradaLEController::class, 'storeAcepciones'])->name('acepciones_store');
         /**
          * 
          */
         Route::view('/signo-del-dia', 'admin.signo')->name('signo.dia');
         Route::view('/notificaciones', 'admin.notificaciones')->name('notificaciones');
+        /**
+         * Categorías
+         */
         Route::resource('/categorias', CategoriaController::class)->only(['index','create','store']);
+        Route::get('/categorias/create', [CategoriaController::class, 'create'])->name('categorias.create');
+        /**
+         * 
+         */
         Route::view('/informes', 'admin.informes')->name('informes');
         Route::view('/productos', 'admin.productos')->name('productos');
         /**
@@ -66,6 +78,11 @@ Route::middleware(['auth'])->group(function () {
          * Usuarios
          */
         Route::get('/usuarios', [UserController::class, 'index'])->name('usuarios');
+        // Mostrar formulario (create)
+        Route::get('/usuarios/create', [UserController::class, 'create'])->name('usuarios.create');
+        // Guardar nueva entrada (store)
+        Route::post('/usuarios', [UserController::class, 'store'])->name('usuarios.store');
+
         
     });
 });

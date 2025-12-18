@@ -17,4 +17,11 @@ class Categoria extends Model
 
     // Si tu tabla no usa created_at / updated_at
     public $timestamps = false;
+
+    // Relación inversa: una categoría tiene muchas acepciones
+    public function acepciones()
+    {
+        return $this->hasMany(Acepciones::class, 'id_categoria');
+    }
+
 }

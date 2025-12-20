@@ -148,6 +148,16 @@ class EntradaLEController extends Controller
 
             $acepcionesGuardadas[] = $acepcion;
         }
+        // Contar cuántas acepciones tiene la entrada 
+        $idEntrada =  $acepcionData['id_entrada'];
+        if ($idEntrada) {
+            $numAcepciones = Acepciones::where('id_entrada', $idEntrada)->count();
+
+            //Actualizar el campo num_acepciones en la tabla lse_entradas_lengua_espanola
+            EntradaLE::where('id', $idEntrada)->update([
+                'num_acepciones' => $numAcepciones
+            ]);
+        }
 
         return response()->json([
             'success' => true,

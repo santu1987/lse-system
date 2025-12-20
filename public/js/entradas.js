@@ -256,6 +256,99 @@ $(document).ready(function () {
             }
         }); 
     });
+    /**
+     * Ag   regar acepciones a sublemas
+     * **/
+    let contadorAcepcionesSublema = 0;
+    $("#btnAgregarAcepcionSublema").on("click", function() {
+        const sublema = $("#inputSublema").val().trim();
 
+        if (sublema === "") {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sublema requerido',
+                text: 'Debes escribir un sublema antes de agregar una acepción.'
+            });
+            return;
+        }
+
+        contadorAcepcionesSublema++;
+
+        let opciones = '<option value="">Seleccionar</option>';
+        window.categorias.forEach(function(cat) {
+            opciones += `<option value="${cat.id}">${cat.nombre}</option>`;
+        });
+
+        // Si es la primera fila, crear la tabla con cabecera
+        if (contadorAcepcionesSublema === 1) {
+            let tabla = `
+                <table class="table table-bordered table-sm" id="tablaAcepcionesSublemas">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width: 40px">N°</th>
+                            <th>Acepción</th>
+                            <th>Ejemplo</th>
+                            <th>Categoría</th>
+                            <th>Fecha</th>
+                            <th>Def. propia</th>
+                            <th style="width: 100px">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            `;
+            $("#cuerpoAcepcionesSublemas").html(tabla);
+        }
+
+        // Fila dinámica
+        let nuevaFila = `
+            <tr>
+                <td>${contadorAcepcionesSublema}</td>
+                <td>
+                    <input type="text" name="sublema_acepcion_${contadorAcepcionesSublema}" 
+                        class="form-control form-control-sm" placeholder="Acepción...">
+                </td>
+                <td>
+                    <input type="text" name="sublema_ejemplo_${contadorAcepcionesSublema}" 
+                        class="form-control form-control-sm" placeholder="Ejemplo...">
+                </td>
+                <td>
+                    <select name="sublema_categoria_${contadorAcepcionesSublema}" 
+                            class="form-control form-control-sm">
+                        ${opciones}
+                    </select>
+                </td>
+                <td>
+                    <input type="date" name="sublema_fecha_${contadorAcepcionesSublema}" 
+                        class="form-control" required>
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" name="sublema_propia_${contadorAcepcionesSublema}">
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        $("#tablaAcepcionesSublemas tbody").append(nuevaFila);
+
+        // Asignar fecha de hoy
+        let hoy = new Date().toISOString().split('T')[0];
+        $(`input[name="fecha_${contadorAcepcionesSublema}"]`).val(hoy);
+    });
+
+    // Eliminar fila
+    $(document).on("click", ".btnEliminarAcepcion", function() {
+        $(this).closest("tr").remove();
+
+        // Si ya no quedan filas, eliminar la tabla completa
+        if ($("#tablaAcepcionesSublemas tbody tr").length === 0) {
+            $("#tablaAcepcionesSublemas").remove();
+            contadorAcepcionesSublema = 0;
+        }
+    });
 
 });

@@ -135,10 +135,53 @@
                 <!-- Mensajes -->
                 <div id="mensaje_acepciones" class="mt-3"></div>  
             </div>
-           
             <!--Fin de acepciones -->
-        </div>
+            <!--Sublemas -->
+            <div class="card-body">
+                <hr>
+                <h4 class="text-info">
+                    <i class="fas fa-book mr-2"></i> Sublemas
+                </h4>
 
+                <!-- Buscador y botón nueva acepción -->
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Buscar sublema...">
+                            <div class="input-group-append">
+                                <button class="btn btn-info" type="button" id="buscarSublema" name="buscarSublema">
+                                    <i class="fas fa-search"></i> Consultar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <button type="button" id="btnNuevaFila" class="btn btn-dark">
+                            <i class="fas fa-plus"></i> Nuevo sublema
+                        </button>
+                    </div> 
+                </div>
+            </div>
+            <div id="cuerpoSublemas" name="cuerpoSublemas" class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <input type="text" id="inputSublema" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
+                    </div>
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-info btn-sm" id="btnAgregarAcepcionSublema">
+                        <i class="fas fa-plus"></i>Agregar Acepción
+                        </button>
+                    </div>
+                </div>
+                <div id="cuerpoAcepcionesSublemas" name="cuerpoAcepcionesSublemas" class="card-body">
+                </div>
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-success" id="btnGuardarSublemas" name="btnGuardarSublemas">
+                        <i class="fas fa-plus"></i> Guardar
+                    </button>
+                </div>        
+            </div>
+    </div>     
         
     </div>
 </div>

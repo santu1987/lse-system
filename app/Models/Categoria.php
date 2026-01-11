@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use SublemaAcepcion;
 
 class Categoria extends Model
 {
@@ -22,6 +23,12 @@ class Categoria extends Model
     public function acepciones()
     {
         return $this->hasMany(Acepciones::class, 'id_categoria');
+    }
+
+    // Relación inversa: una categoría tiene muchas SublemaAcepciones
+    public function sublemasAcepciones()
+    {
+        return $this->hasMany(SublemaAcepcion::class, 'id_categoria');
     }
 
 }

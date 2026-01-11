@@ -156,7 +156,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 text-right">
-                        <button type="button" id="btnNuevaFila" class="btn btn-dark">
+                        <button type="button" id="btnNuevaFilaSublema" class="btn btn-dark">
                             <i class="fas fa-plus"></i> Nuevo sublema
                         </button>
                     </div> 
@@ -165,7 +165,7 @@
             <div id="cuerpoSublemas" name="cuerpoSublemas" class="card-body">
                 <div class="row mb-3">
                     <div class="col-md-8">
-                        <input type="text" id="inputSublema" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
+                        <input type="text" id="inputSublema1" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
                     </div>
                     <div class="col-md-4">
                         <button type="button" class="btn btn-info btn-sm" id="btnAgregarAcepcionSublema">
@@ -173,13 +173,18 @@
                         </button>
                     </div>
                 </div>
-                <div id="cuerpoAcepcionesSublemas" name="cuerpoAcepcionesSublemas" class="card-body">
+                <div id="cuerpoAcepcionesSublemas1" name="cuerpoAcepcionesSublemas1" class="card-body">
+                </div>        
+            </div>
+            <div>
+                <div id="cuerpoSublemasAdicionales" name="cuerpoSublemasAdicionales" class="card-body">
                 </div>
+                
                 <div class="card-footer text-right">
                     <button type="submit" class="btn btn-success" id="btnGuardarSublemas" name="btnGuardarSublemas">
                         <i class="fas fa-plus"></i> Guardar
                     </button>
-                </div>        
+                </div>
             </div>
     </div>     
         
@@ -192,6 +197,7 @@
         const storeUrl = "{{ route('entradas_le.store') }}";
         const indexUrl = "{{ route('entradas_le.index') }}";
         const url_store_acepciones= "{{ route('acepciones_store') }}";
+        const sublemaPrincipalUrl = "{{ route('entradas_le.guardarSublemaPrincipal') }}";
     </script>
     
     <script>

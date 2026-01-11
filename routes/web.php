@@ -39,6 +39,11 @@ Route::middleware(['auth'])->group(function () {
             ->name('entradas_le.edit');
         // Update de la entrada
         Route::put('/entradas_le/{id}', [EntradaLEController::class, 'update'])->name('entradas_le.update');
+        //-BLoque de sublemas y acepciones
+        // Guardar primer sublema y sus acepciones relacionadas
+        Route::post('/entradas_le/guardar_sublema', [EntradaLEController::class, 'guardarSublema'])->name('entradas_le.guardarSublemaPrincipal');
+
+        
         /**
          * Entradas LSE
          */

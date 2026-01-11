@@ -164,6 +164,10 @@ class EntradaLEController extends Controller
             'acepciones' => $acepcionesGuardadas
         ]);
     }
-
-
+    /**
+     * GUardar sublmea principal
+     */
+    public function guardarSublema(Request $request){
+        dd($request);
+    }
 }

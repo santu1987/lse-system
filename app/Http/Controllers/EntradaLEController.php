@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\EntradaLE;
 use App\Models\Categoria;
 use App\Models\Acepciones;
+use App\Models\Sublema;
+use App\Models\SublemaAcepcion;
 use Illuminate\Http\Request; 
 use Carbon\Carbon; 
 
@@ -168,6 +170,96 @@ class EntradaLEController extends Controller
      * GUardar sublmea principal
      */
     public function guardarSublema(Request $request){
-        dd($request);
+        $idEntrada = $request->input('id_entrada');
+        $sublemasData = $request->input('sublemas', []); // ahora recibes un array de sublemas
+
+        $sublemasGuardados = [];
+        $totalSublemas = 0;
+        $totalAcepciones = 0;
+
+        foreach ($sublemasData as $sublemaData) {
+            // 1. Crear el sublema
+            $sublema = Sublema::create([
+                'id_entrada' => $idEntrada,
+                'sublema'    => $sublemaData['sublema'],
+            ]);
+            $totalSublemas++;
+
+            // 2. Recorrer las acepciones y guardarlas
+            $acepciones = [];
+            foreach ($sublemaData['acepciones'] as $acepcionData) {
+                $acepciones[] = [
+                    'acepcion'           => $acepcionData['acepcion'],
+                    'ejemplo'            => $acepcionData['ejemplo'],
+                    'id_categoria'       => $acepcionData['categoria'],
+                    'fecha_modificacion' => $acepcionData['fecha'],
+                    'definicion_propia'  => $acepcionData['propia'] ? 1 : 0,
+                    'id_entrada'         => $idEntrada,
+                    'id_sublema'         => $sublema->id,
+                ];
+            }
+            
+
+            if (!empty($acepciones)) {
+                SublemaAcepcion::insert($acepciones);
+                $totalAcepciones += count($acepciones);
+            }
+            
+            $sublemasGuardados[] = $sublema;
+        }
+
+        //  Actualizar la tabla EntradaLE con los contadores
+        $entrada = EntradaLE::find($idEntrada);
+        if ($entrada) {
+            $entrada->num_sublemas = $totalSublemas;
+            $entrada->num_acepciones = $totalAcepciones;
+            $entrada->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sublemas y acepciones guardados correctamente',
+            'sublemas' => $sublemasGuardados,
+            'num_sublemas' => $totalSublemas,
+            'num_acepciones' => $totalAcepciones,
+        ]);
     }
+     /* $idEntrada = $request->input('id_entrada');
+        $sublemasData = $request->input('sublemas', []); // ahora recibes un array de sublemas
+
+        $sublemasGuardados = [];
+
+        foreach ($sublemasData as $sublemaData) {
+            // 1. Crear el sublema
+            $sublema = Sublema::create([
+                'id_entrada' => $idEntrada,
+                'sublema'    => $sublemaData['sublema'],
+            ]);
+
+            // 2. Recorrer las acepciones y guardarlas
+            $acepciones = [];
+            foreach ($sublemaData['acepciones'] as $acepcionData) {
+                $acepciones[] = [
+                    'acepcion'           => $acepcionData['acepcion'],
+                    'ejemplo'            => $acepcionData['ejemplo'],
+                    'id_categoria'       => $acepcionData['categoria'],
+                    'fecha_modificacion' => $acepcionData['fecha'],
+                    'definicion_propia'  => $acepcionData['propia'] ? 1 : 0,
+                    'id_entrada'         => $idEntrada,
+                    'id_sublema'         => $sublema->id,
+                ];
+            }
+
+            if (!empty($acepciones)) {
+                SublemaAcepcion::insert($acepciones);
+            }
+
+            $sublemasGuardados[] = $sublema;
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sublemas y acepciones guardados correctamente',
+            'sublemas' => $sublemasGuardados,
+        ]);*/
 }

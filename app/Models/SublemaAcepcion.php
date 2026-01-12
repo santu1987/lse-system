@@ -1,7 +1,5 @@
 <?php
 
-<?php
-
 namespace App\Models;
 
 use App\Models\EntradaLE;
@@ -33,12 +31,6 @@ class SublemaAcepcion extends Model
     public function sublema()
     {
         return $this->belongsTo(Sublema::class, 'id_sublema');
-    }
-
-    // Relación: cada acepción pertenece a una categoría
-    public function categoria()
-    {
-        return $this->belongsTo(Categoria::class, 'id_categoria');
     }
 
     // Relación con Categoría

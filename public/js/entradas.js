@@ -299,7 +299,7 @@ $(document).ready(function () {
                             <th style="width: 100px">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody></tbody>
+                    <tbody id="tbody_sublema_${contadorAcepcionesPorSublema[0]}" name="tbody_sublema_${contadorAcepcionesPorSublema[0]}"></tbody>
                 </table>
             `;
             $("#cuerpoAcepcionesSublemas1").html(tabla);
@@ -503,11 +503,10 @@ $(document).ready(function () {
      * Bloques para guardar acepciones y sublemas
      */
     //- Guardar sublema 1 y sus acepciones relacionadas
+   /*
     $("#btnGuardarSublemas").on("click", function(e) {
         e.preventDefault();
-        /**
-         * Se valida que tenga uan entrada registrada
-         */
+       
         let idEntrada = $("#idEntrada").val();
 
         if (!idEntrada || idEntrada.trim() === "") {
@@ -562,6 +561,7 @@ $(document).ready(function () {
             url: sublemaPrincipalUrl,  
             method: "POST",
             data: {
+                id_entrada: idEntrada,
                 sublema1: data,
                 _token: $('meta[name="csrf-token"]').attr('content') // si usas Laravel
             },
@@ -570,6 +570,84 @@ $(document).ready(function () {
                     icon: 'success',
                     title: 'Guardado',
                     text: 'El sublema y sus acepciones se guardaron correctamente.'
+                });
+            },
+            error: function(xhr) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al guardar. Intenta nuevamente.'
+                });
+            }
+        });
+    });*/
+    $("#btnGuardarSublemas").on("click", function(e) {
+        e.preventDefault();
+
+        let sublemas = [];
+
+        // Recorremos todos los bloques de sublemas dinámicos
+        $("[id^='inputSublema']").each(function() {
+            let sublemaId = $(this).attr("id").replace("inputSublema", "");
+            let sublemaTexto = $(this).val().trim();
+
+            if (sublemaTexto === "") {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sublema requerido',
+                    text: `Debes escribir un sublema en el bloque ${sublemaId}.`
+                });
+                return false; // corta el each
+            }
+            console.log("sublemaId: "+sublemaId)
+            // Recorremos las acepciones de este sublema
+            let acepciones = [];
+            $(`#tbody_sublema_${sublemaId} tr`).each(function() {
+                let acepcion = $(this).find(`input[name^='sublema_acepcion_${sublemaId}_']`).val();
+                let ejemplo  = $(this).find(`input[name^='sublema_ejemplo_${sublemaId}_']`).val();
+                let categoria = $(this).find(`select[name^='sublema_categoria_${sublemaId}_']`).val();
+                let fecha    = $(this).find(`input[name^='sublema_fecha_${sublemaId}_']`).val();
+                let propia   = $(this).find(`input[name^='sublema_propia_${sublemaId}_']`).is(":checked");
+
+                acepciones.push({
+                    acepcion: acepcion,
+                    ejemplo: ejemplo,
+                    categoria: categoria,
+                    fecha: fecha,
+                    propia: propia
+                });
+                console.log(acepciones);
+            });
+
+            sublemas.push({
+                sublema: sublemaTexto,
+                acepciones: acepciones
+            });
+            console.log(sublemas);
+
+        });
+
+        // Objeto final
+        let data = {
+            id_entrada: $("#idEntrada").val(), // asegúrate de tener este campo en tu formulario
+            sublemas: sublemas
+        };
+
+        console.log("Objeto a enviar:", data);
+
+        // Enviar al backend
+        $.ajax({
+            url: sublemaPrincipalUrl, // tu endpoint en Laravel
+            method: "POST",
+            data: {
+                _token: $('meta[name="csrf-token"]').attr('content'),
+                ...data
+            },
+            success: function(response) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Guardado',
+                    text: 'Los sublemas y sus acepciones se guardaron correctamente.'
                 });
             },
             error: function(xhr) {

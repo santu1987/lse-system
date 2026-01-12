@@ -176,6 +176,9 @@ class EntradaLEController extends Controller
         $sublemasGuardados = [];
         $totalSublemas = 0;
         $totalAcepciones = 0;
+        $idsSublemas = [];
+        $idsAcepciones = [];
+
 
         foreach ($sublemasData as $sublemaData) {
             // 1. Crear el sublema
@@ -184,6 +187,7 @@ class EntradaLEController extends Controller
                 'sublema'    => $sublemaData['sublema'],
             ]);
             $totalSublemas++;
+            $idsSublemas[] = $sublema->id;
 
             // 2. Recorrer las acepciones y guardarlas
             $acepciones = [];
@@ -201,8 +205,12 @@ class EntradaLEController extends Controller
             
 
             if (!empty($acepciones)) {
-                SublemaAcepcion::insert($acepciones);
+                foreach ($acepciones as $acepcionData) {
+                    $sublema_acepcion = SublemaAcepcion::create($acepcionData);
+                    $idsAcepciones[] = $sublema_acepcion->id;
+                }
                 $totalAcepciones += count($acepciones);
+
             }
             
             $sublemasGuardados[] = $sublema;
@@ -222,6 +230,8 @@ class EntradaLEController extends Controller
             'sublemas' => $sublemasGuardados,
             'num_sublemas' => $totalSublemas,
             'num_acepciones' => $totalAcepciones,
+            'idsSublemas' => $idsSublemas,
+            'idsAcepciones' => $idsAcepciones,
         ]);
     }
      /* $idEntrada = $request->input('id_entrada');

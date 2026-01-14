@@ -35,7 +35,7 @@
                             <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
-                    <input type="hidden" id="idEntrada" name="idEntrada">
+                    <input type="text" id="idEntrada" name="idEntrada">
                 </div>
 
                 <!-- Footer con botones -->

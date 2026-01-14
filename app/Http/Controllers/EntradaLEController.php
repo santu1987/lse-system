@@ -135,6 +135,32 @@ class EntradaLEController extends Controller
 
         foreach ($request->acepciones as $acepcionData) {
             // Si quieres actualizar si ya existe (por ejemplo por orden + entrada)
+            // Si viene el id, actualizamos esa acepción
+            if (!empty($acepcionData['id'])) {
+                $acepcion = Acepciones::find($acepcionData['id']);
+                if ($acepcion) {
+                    $acepcion->update([
+                        'acepcion'           => $acepcionData['acepcion'],
+                        'ejemplo'            => $acepcionData['ejemplo'] ?? null,
+                        'id_categoria'       => $acepcionData['id_categoria'] ?? null,
+                        'fecha_modificacion' => $acepcionData['fecha_modificacion'],
+                        'definicion_propia'  => $acepcionData['definicion_propia'] ?? 0,
+                    ]);
+                }
+            } else {
+                // Si no viene id, creamos una nueva
+                $acepcion = Acepciones::create([
+                    'id_entrada'         => $acepcionData['id_entrada'],
+                    'acepcion'           => $acepcionData['acepcion'],
+                    'ejemplo'            => $acepcionData['ejemplo'] ?? null,
+                    'id_categoria'       => $acepcionData['id_categoria'] ?? null,
+                    'fecha_modificacion' => $acepcionData['fecha_modificacion'],
+                    'definicion_propia'  => $acepcionData['definicion_propia'] ?? 0,
+                ]);
+            }
+            // Guardamos el modelo con su id
+            $acepcionesGuardadas[] = $acepcion;
+           /*
             $acepcion = Acepciones::updateOrCreate(
                 [
                     'id_entrada' => $acepcionData['id_entrada'],
@@ -148,7 +174,7 @@ class EntradaLEController extends Controller
                 ]
             );
 
-            $acepcionesGuardadas[] = $acepcion;
+            $acepcionesGuardadas[] = $acepcion;*/
         }
         // Contar cuántas acepciones tiene la entrada 
         $idEntrada =  $acepcionData['id_entrada'];

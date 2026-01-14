@@ -176,6 +176,7 @@ $(document).ready(function () {
                     <button type="button" class="btn btn-danger btn-sm btnEliminarFila">
                         <i class="fas fa-trash-alt"></i> 
                     </button>
+                    <input type="text" id="idAcepcion_${contador}" name="idAcepcion_${contador}">
                 </td>
             </tr>
         `;
@@ -240,6 +241,19 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $('#mensaje_acepciones').html('');
                     }, 10000); // 10000 ms = 10 segundos
+                    /*response.acepciones.forEach(function(acepcion, index) {
+                    // Buscar el input hidden correspondiente a esa fila
+                    let $fila = $("table tbody tr").eq(index);
+                    let $idInput = $fila.find(`input[name^="idAcepcion_"]`);
+
+                    // Si no existe el input, lo creamos
+                    if ($idInput.length === 0) {
+                        $fila.prepend(`<input type="hidden" name="idAcepcion_${index+1}" value="${acepcion.id}">`);
+                    } else {
+                        $idInput.val(acepcion.id);
+                    }
+                    });*/
+
 
             },
             error: function (xhr) {

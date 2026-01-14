@@ -214,6 +214,7 @@ $(document).ready(function () {
             let categoria = $fila.find('select[name^="categoria_"]').val();
             let fecha = $fila.find('input[type="date"]').val();
             let defPropia = $fila.find('input[type="checkbox"]').is(":checked");
+            let id = $fila.find('input[name^="idAcepcion_"]').val();
             acepciones.push({
                 id_entrada: idEntrada,
                 orden: index + 1,
@@ -221,7 +222,8 @@ $(document).ready(function () {
                 ejemplo: ejemplo,
                 id_categoria: categoria,
                 fecha_modificacion: fecha,
-                definicion_propia: defPropia ? 1 : 0
+                definicion_propia: defPropia ? 1 : 0,
+                id : id
             });
         });
 
@@ -241,20 +243,18 @@ $(document).ready(function () {
                     setTimeout(function () {
                         $('#mensaje_acepciones').html('');
                     }, 10000); // 10000 ms = 10 segundos
-                    /*response.acepciones.forEach(function(acepcion, index) {
-                    // Buscar el input hidden correspondiente a esa fila
-                    let $fila = $("table tbody tr").eq(index);
-                    let $idInput = $fila.find(`input[name^="idAcepcion_"]`);
+                    response.acepciones.forEach(function(acepcion, index) {
+                        // Buscar el input hidden correspondiente a esa fila
+                        let $fila = $("table tbody tr").eq(index);
+                        let $idInput = $fila.find(`input[name^="idAcepcion_"]`);
 
-                    // Si no existe el input, lo creamos
-                    if ($idInput.length === 0) {
-                        $fila.prepend(`<input type="hidden" name="idAcepcion_${index+1}" value="${acepcion.id}">`);
-                    } else {
-                        $idInput.val(acepcion.id);
-                    }
-                    });*/
-
-
+                        // Si no existe el input, lo creamos
+                        if ($idInput.length === 0) {
+                            $fila.prepend(`<input type="hidden" name="idAcepcion_${index+1}" value="${acepcion.id}">`);
+                        } else {
+                            $idInput.val(acepcion.id);
+                        }
+                    });
             },
             error: function (xhr) {
                 let errors = xhr.responseJSON?.errors;
@@ -385,6 +385,7 @@ $(document).ready(function () {
                         name="inputSublema${contadorSublemas}" 
                         class="form-control form-control-sm mr-2" 
                         placeholder="Escribe el sublema...">
+                    <input type="text" name="idSublema${contadorSublemas}" id="idSublema${contadorSublemas}">    
                 </div>
                 <div class="col-md-4">
                     <button type="button" 
@@ -663,6 +664,21 @@ $(document).ready(function () {
                     title: 'Guardado',
                     text: 'Los sublemas y sus acepciones se guardaron correctamente.'
                 });
+            /**
+             * Recorremos los idsSublemas
+             *  */
+            console.log(response.idsSublemas)
+            response.sublemas.forEach((sublemaObj, index) => {
+                const inputId = `idSublema${index + 1}`;
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.value = sublemaObj.id; // asigna el ID del sublema
+                }
+            });
+
+            /**
+             * 
+             */
             },
             error: function(xhr) {
                 Swal.fire({

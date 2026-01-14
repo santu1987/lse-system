@@ -122,6 +122,7 @@ class EntradaLEController extends Controller
         // Validar que venga el arreglo
         $request->validate([
             'acepciones' => 'required|array',
+            'acepciones.*.id' => 'nullable|integer|exists:lse_acepciones_entradas_lengua_espanola,id',
             'acepciones.*.id_entrada' => 'required|integer|exists:lse_entradas_lengua_espanola,id',
             'acepciones.*.orden' => 'nullable|integer|min:1',
             'acepciones.*.acepcion' => 'required|string|max:255',
@@ -217,18 +218,19 @@ class EntradaLEController extends Controller
 
             // 2. Recorrer las acepciones y guardarlas
             $acepciones = [];
-            foreach ($sublemaData['acepciones'] as $acepcionData) {
-                $acepciones[] = [
-                    'acepcion'           => $acepcionData['acepcion'],
-                    'ejemplo'            => $acepcionData['ejemplo'],
-                    'id_categoria'       => $acepcionData['categoria'],
-                    'fecha_modificacion' => $acepcionData['fecha'],
-                    'definicion_propia'  => $acepcionData['propia'] ? 1 : 0,
-                    'id_entrada'         => $idEntrada,
-                    'id_sublema'         => $sublema->id,
-                ];
+            if (!empty($sublemaData['acepciones']) && is_array($sublemaData['acepciones'])) {
+                foreach ($sublemaData['acepciones'] as $acepcionData) {
+                    $acepciones[] = [
+                        'acepcion'           => $acepcionData['acepcion'],
+                        'ejemplo'            => $acepcionData['ejemplo'],
+                        'id_categoria'       => $acepcionData['categoria'],
+                        'fecha_modificacion' => $acepcionData['fecha'],
+                        'definicion_propia'  => $acepcionData['propia'] ? 1 : 0,
+                        'id_entrada'         => $idEntrada,
+                        'id_sublema'         => $sublema->id,
+                    ];
+                }
             }
-            
 
             if (!empty($acepciones)) {
                 foreach ($acepciones as $acepcionData) {

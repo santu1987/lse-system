@@ -166,6 +166,7 @@
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <input type="text" id="inputSublema1" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
+                        <input type="text" name="idSublema1" id="idSublema1">
                     </div>
                     <div class="col-md-4">
                         <button type="button" class="btn btn-info btn-sm" id="btnAgregarAcepcionSublema">

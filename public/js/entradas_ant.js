@@ -223,24 +223,23 @@ $(document).ready(function () {
         $.ajax({
             url: url_store_acepciones,
             method: "POST",
-            data: datos, 
+            data: datos, // 👈 ya no va en array
             success: function (response) {
                 $("#modalAcepcion").modal("hide");
                 console.log("Acepción guardada:", response.acepcion);
-                let acepcion = response.acepcion;
-                // Buscar si ya existe la fila con ese ID
-                let filaExistente = $("table tbody tr[data-id='" + acepcion.id + "']");
-                // Construir fila HTML
-                let numero = filaExistente.length > 0 
-                    ? filaExistente.find("td:first").text() // conservar el número original
-                    : $("table tbody tr").length + 1;       // si no existe, asignar nuevo número
 
+                let acepcion = response.acepcion;
+
+                // Contar filas actuales para asignar número
+                let numero = $("table tbody tr").length + 1;
+
+                // Construir fila HTML
                 let nuevaFila = `
-                    <tr data-id="${acepcion.id}" data-id-categoria="${acepcion.id_categoria}">
+                    <tr data-id="${acepcion.id}">
                         <td>${numero}</td>
                         <td>${acepcion.acepcion}</td>
                         <td>${acepcion.ejemplo ?? ''}</td>
-                        <td>${acepcion.categoria_descripcion ?? ''}</td>
+                        <td>${acepcion.id_categoria ?? ''}</td>
                         <td>${acepcion.fecha_modificacion}</td>
                         <td class="text-center">
                             ${acepcion.definicion_propia == 1 ? '<i class="fas fa-check text-success"></i>' : ''}
@@ -253,13 +252,7 @@ $(document).ready(function () {
                     </tr>
                 `;
 
-                if (filaExistente.length > 0) {
-                    // Si ya existe, reemplazar la fila
-                    filaExistente.replaceWith(nuevaFila);
-                } else {
-                    // Si no existe, agregar nueva fila
-                    $("table tbody").append(nuevaFila);
-                }
+                $("table tbody").append(nuevaFila);
 
                 $('#mensaje_acepciones').html('<div class="alert alert-success">Acepción guardada correctamente</div>');
                 setTimeout(function () { $('#mensaje_acepciones').html(''); }, 5000);
@@ -288,71 +281,10 @@ $(document).ready(function () {
             }
         });
     });
-    /**
-     * Acción eliminar fila de  acepcion
-     */
-   $(document).on("click", ".btnEliminarAcepcion", function () {
-        let $fila = $(this).closest("tr");
-        let idAcepcion = $fila.data("id");
 
-        Swal.fire({
-            title: '¿Eliminar acepción?',
-            text: "Esta acción no se puede deshacer",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: deleteAcepcionesUrl, // ajusta según tu ruta
-                    method: "DELETE",
-                    data: {
-                        id_acepcion:idAcepcion,
-                        _token: $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function (response) {
-                        if (response.success) {
-                            $fila.remove(); // quitar la fila de la tabla
-                            Swal.fire('Eliminada', response.message, 'success');
-                        }
-                    },
-                    error: function () {
-                        Swal.fire('Error', 'No se pudo eliminar la acepción', 'error');
-                    }
-                });
-            }
-        });
-    });
-
-    /**
-     * Btn Editar Acepción 
-     */
-    $(document).on("click", ".btnEditarAcepcion", function () {
-        // Obtener la fila seleccionada
-        let $fila = $(this).closest("tr");
-
-        // Extraer datos de la fila
-        let idAcepcion       = $fila.data("id");
-        let acepcion         = $fila.find("td:eq(1)").text().trim();
-        let ejemplo          = $fila.find("td:eq(2)").text().trim();
-        let idCategoria      = $fila.data("id-categoria");
-        let fechaModificacion= $fila.find("td:eq(4)").text().trim();
-        let defPropia        = $fila.find("td:eq(5)").find("i").length > 0; // check si tiene el ícono ✔
-
-        // Llenar el formulario del modal
-        $("#idAcepcion").val(idAcepcion);
-        $("#acepcion").val(acepcion);
-        $("#ejemplo").val(ejemplo);
-
-        // Si guardas el id de categoría en el hidden, úsalo en vez del texto
-        $("#id_categoria").val(idCategoria);
-
-        $("#fecha_modificacion").val(fechaModificacion);
-        $("#definicion_propia").prop("checked", defPropia);
-
-        // Mostrar el modal
-        $("#modalAcepcion").modal("show");
+    // Acción eliminar fila
+    $(document).on("click", ".btnEliminarFila", function() {
+        $(this).closest("tr").remove();
     });
 
     // Botón para guardar todas las acepciones
@@ -440,168 +372,8 @@ $(document).ready(function () {
         }); 
     });*/
     /**
-     * Cuerpo de sublemas
-     */
-    /**
-     * Guardar sublemas
-     */
-    $(document).on("click", ".btnGuardarSublema", function () {
-        // Obtener el índice dinámico (ej. 1, 2, 3...)
-        let index = $(this).data("index"); 
-
-        // Capturar valores según el índice
-        let sublema   = $(`#inputSublema${index}`).val().trim();
-        let idEntrada = $("#idEntrada").val();
-        let idSublema = $(`#idSublema${index}`).val();
-
-        if (sublema === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Atención',
-                text: 'Debes escribir un sublema antes de guardar.'
-            });
-            return;
-        }
-
-        $.ajax({
-            url: storeSublemasUrl,
-            method: "POST",
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                id_entrada: idEntrada,
-                sublema: sublema,
-                id: idSublema // si existe, se actualiza; si no, se crea
-            },
-            success: function (response) {
-                // Actualizar el campo oculto con el ID devuelto
-                $(`#idSublema${index}`).val(response.sublema.id);
-
-                $('#mensaje_sublemas').html('<div class="alert alert-success">Sublema guardado correctamente</div>');
-                setTimeout(function () { $('#mensaje_sublemas').html(''); }, 5000);
-            },
-            error: function (xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Hubo un problema al guardar el sublema. Intenta nuevamente.'
-                });
-                console.error(xhr.responseText);
-            }
-        });
-    });
-    /**
      * Agregar acepciones a sublemas
      * **/
-    let contadorAcepcionesPorSublema = []; // arreglo para cada sublema
-    $(".btnAgregarAcepcionSublema").on("click", function() {
-        let index = $(this).data("index");  // índice dinámico (1, 2, 3...)
-
-        const sublema = $(`#inputSublema${index}`).val().trim();
-
-        if (sublema === "") {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Sublema requerido',
-                text: 'Debes escribir un sublema antes de agregar una acepción.'
-            });
-            return;
-        }
-
-        // inicializar contador si no existe
-        if (typeof contadorAcepcionesPorSublema[index] === "undefined") {
-            contadorAcepcionesPorSublema[index] = 0;
-        }
-
-        // incrementar contador para ese sublema
-        contadorAcepcionesPorSublema[index]++;
-
-        alert(`Sublema ${index} → Acepciones: ${contadorAcepcionesPorSublema[index]}`);
-
-        // Si es la primera fila, crear la tabla con cabecera para ese sublema
-        if (contadorAcepcionesPorSublema[index] === 1) {
-            let tabla = `
-                <table class="table table-bordered table-sm" id="tablaAcepcionesSublema_${index}">
-                    <thead class="thead-light">
-                        <tr>
-                            <th style="width: 40px">N°</th>
-                            <th>Acepción</th>
-                            <th>Ejemplo</th>
-                            <th>Categoría</th>
-                            <th>Fecha</th>
-                            <th>Def. propia</th>
-                            <th style="width: 100px">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody_sublema_${index}" name="tbody_sublema_${index}"></tbody>
-                </table>
-            `;
-            $(`#cuerpoAcepcionesSublemas${index}`).html(tabla);
-        }
-
-        // Guardar el índice en el modal
-        $("#modalAcepcion").data("index", index);
-
-        // Limpiar los campos del formulario dentro del modal
-        $("#modalAcepcion input, #modalAcepcion select, #modalAcepcion textarea").val("");
-        $("#modalAcepcion input[type=checkbox]").prop("checked", false);
-
-        // Abrir modal
-        $("#modalAcepcion").modal("show");
-
-        // Asignar fecha de hoy al input correspondiente
-        $(`input[name="fecha_${index}_${contadorAcepcionesPorSublema[index]}"]`).val(hoy);
-    });
-    /**
-     * btnGuardarSublemaAcepcionModal
-     */
-    $(document).on("click", "#btnGuardarSublemaAcepcionModal", function() {
-        let index = $("#modalAcepcion").data("index"); // recuperar índice del sublema
-
-        // Capturar valores del formulario del modal
-        let acepcion   = $("#modalAcepcion #inputAcepcion").val().trim();
-        let ejemplo    = $("#modalAcepcion #inputEjemplo").val().trim();
-        let categoria  = $("#modalAcepcion #selectCategoria").val();
-        let categoriaDesc = $("#modalAcepcion #selectCategoria option:selected").text();
-        let fecha      = $("#modalAcepcion #inputFecha").val();
-        let defPropia  = $("#modalAcepcion #checkDefPropia").is(":checked");
-
-        // Validación básica
-        if (acepcion === "") {
-            Swal.fire({ icon: 'warning', title: 'Atención', text: 'La acepción es obligatoria.' });
-            return;
-        }
-
-        // Calcular número de fila
-        let numero = $(`#tbody_sublema_${index} tr`).length + 1;
-
-        // Construir fila HTML
-        let nuevaFila = `
-            <tr>
-                <td>${numero}</td>
-                <td>${acepcion}</td>
-                <td>${ejemplo}</td>
-                <td data-id="${categoria}">${categoriaDesc}</td>
-                <td>${fecha}</td>
-                <td class="text-center">${defPropia ? '<i class="fas fa-check text-success"></i>' : ''}</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-warning btn-sm btnEditarAcepcion">Editar</button>
-                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">Eliminar</button>
-                </td>
-            </tr>
-        `;
-
-        // Insertar fila en la tabla dinámica del sublema correspondiente
-        $(`#tbody_sublema_${index}`).append(nuevaFila);
-
-        // Cerrar modal
-        $("#modalAcepcion").modal("hide");
-
-        // Mensaje de éxito
-        $('#mensaje_acepciones').html('<div class="alert alert-success">Acepción guardada correctamente</div>');
-        setTimeout(() => $('#mensaje_acepciones').html(''), 5000);
-    });
-
-    /*
     let contadorAcepcionesSublema = 0;
     let opciones = '<option value="">Seleccionar</option>';
     window.categorias.forEach(function(cat) {
@@ -610,11 +382,8 @@ $(document).ready(function () {
     let contadorSublemas = 1;
     let contadorAcepcionesPorSublema  = [];
     contadorAcepcionesPorSublema[0] = 0;
-    $(".btnAgregarAcepcionSublema").on("click", function() {
-
-        let index = $(this).data("index"); 
-
-        const sublema = $(`#inputSublema${index}`).val().trim();
+    $("#btnAgregarAcepcionSublema").on("click", function() {
+        const sublema = $("#inputSublema1").val().trim();
 
         if (sublema === "") {
             Swal.fire({
@@ -648,13 +417,44 @@ $(document).ready(function () {
             `;
             $("#cuerpoAcepcionesSublemas1").html(tabla);
         }
-        // Abrir el modal de acepciones y pasar el índice del sublema
-        $("#modalAcepcion").data("index", index); // guardamos el índice en el modal
-        $("#modalAcepcion").modal("show");
+        
+        // Fila dinámica
+        let nuevaFila = `
+            <tr>
+                <td>${contadorAcepcionesPorSublema[0]}</td>
+                <td>
+                    <input type="text" name="sublema_acepcion_1_${contadorAcepcionesPorSublema[0]}" 
+                        class="form-control form-control-sm" placeholder="Acepción...">
+                </td>
+                <td>
+                    <input type="text" name="sublema_ejemplo_1_${contadorAcepcionesPorSublema[0]}" 
+                        class="form-control form-control-sm" placeholder="Ejemplo...">
+                </td>
+                <td>
+                   <select name="sublema_categoria_1_${contadorAcepcionesPorSublema[0]}" class="form-control form-control-sm">
+                      ${opciones}
+                   </select>
+                </td>
+                <td>
+                    <input type="date" name="sublema_fecha_1_${contadorAcepcionesPorSublema[0]}" 
+                        class="form-control" required value="${hoy}">
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" name="sublema_propia_1_${contadorAcepcionesPorSublema[0]}">
+                </td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+
+        $("#tablaAcepcionesSublemas tbody").append(nuevaFila);
 
         // Asignar fecha de hoy
         $(`input[name="fecha_${contadorAcepcionesPorSublema[0]}"]`).val(hoy);
-    });*/
+    });
 
     // Eliminar fila
     $(document).on("click", ".btnEliminarAcepcion", function() {
@@ -666,7 +466,6 @@ $(document).ready(function () {
             contadorAcepcionesSublema = 0;
         }
     });
-    
     /**
      * Nueva fila de sublemas
      */
@@ -680,19 +479,14 @@ $(document).ready(function () {
         contadorAcepcionesPorSublema[contadorSublemas]++;
         let nuevoBloque = `
             <div class="row mb-3" data-sublema="${contadorSublemas}">
-                <div class="col-md-6">
+                <div class="col-md-8">
                     <input type="text" id="inputSublema${contadorSublemas}" 
                         name="inputSublema${contadorSublemas}" 
                         class="form-control form-control-sm mr-2" 
                         placeholder="Escribe el sublema...">
-                    <input type="text" name="idSublema${contadorSublemas}" id="idSublema${contadorSublemas}">
+                    <input type="text" name="idSublema${contadorSublemas}" id="idSublema${contadorSublemas}">    
                 </div>
-                <div class="col-md-3">
-                     <button type="button" class="btn btn-success btn-sm btnGuardarSublema" data-index="${contadorSublemas}">
-                        Guardar Sublema ${contadorSublemas}
-                    </button>
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <button type="button" 
                             class="btn btn-info btn-sm btnAgregarAcepcionSublema" 
                             data-target="#cuerpoAcepcionesSublemas${contadorSublemas}" data-sublema="${contadorSublemas}">
@@ -712,7 +506,6 @@ $(document).ready(function () {
      *  Generar acepciones dinamicas a un sublema 
     */
     // Generar acepción dinámica dentro del sublema correspondiente
-    /*
     $(document).on("click", ".btnAgregarAcepcionSublema", function() {
         let sublemaTempId = $(this).data("sublema"); // ID temporal
         let targetDiv = $(this).data("target");
@@ -738,6 +531,41 @@ $(document).ready(function () {
             `;
              $(targetDiv).append(tabla);
         }
+        /*/let fila = `
+            <div class="row mb-2 border p-2 rounded">
+                <div class="col-md-2">
+                    <input type="text" class="form-control form-control-sm" 
+                        name="sublema_acepcion__${sublemaTempId}_${contadorAcepcionesPorSublema[0]}" 
+                        placeholder="Acepción...">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control form-control-sm" 
+                        name="sublema_ejemplo_${sublemaTempId}_${contadorAcepcionesPorSublema[0]}" 
+                        placeholder="Ejemplo...">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control form-control-sm" 
+                            name="sublema_categoria_${sublemaTempId}_${contadorAcepcionesPorSublema[0]}">
+                        ${opciones}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" 
+                        name="sublema_fecha_${sublemaTempId}_${contadorAcepcionesPorSublema[0]}" 
+                        value="${hoy}">
+                </div>
+                <div class="col-md-2 text-center">
+                    <input type="checkbox" 
+                        name="sublema_propia_${sublemaTempId}_${contadorAcepcionesPorSublema[0]}">
+                </div>
+                <div class="col-md-2 text-center">
+                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+            </div>
+        `;*/
+
         let fila = `
                     <tr>
                         <td>${contadorAcepcionesPorSublema[sublemaTempId    ]}</td>
@@ -779,7 +607,7 @@ $(document).ready(function () {
         $(`#tbody_sublema_${sublemaTempId}`).append(fila);
         contadorAcepcionesPorSublema[sublemaTempId]++;
 
-    });*/
+    });
 
     // Eliminar acepción
     $(document).on("click", ".btnEliminarAcepcion", function() {

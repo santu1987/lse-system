@@ -97,6 +97,11 @@
                        
                     </tbody>
                 </table>
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-success" id="btnGuardarAcepciones" name="btnGuardarAcepciones">
+                        <i class="fas fa-plus"></i> Guardar
+                    </button>
+                </div>  
                 <!-- Mensajes -->
                 <div id="mensaje_acepciones" class="mt-3"></div>  
             </div>
@@ -129,17 +134,12 @@
             </div>
             <div id="cuerpoSublemas" name="cuerpoSublemas" class="card-body">
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-8">
                         <input type="text" id="inputSublema1" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
                         <input type="text" name="idSublema1" id="idSublema1">
                     </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-success btn-sm btnGuardarSublema" data-index="1">
-                            Guardar Sublema 1
-                        </button>
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" class="btn btn-info btn-sm btnAgregarAcepcionSublema" id=""  style="width: 100%;" data-index="1">
+                    <div class="col-md-4">
+                        <button type="button" class="btn btn-info btn-sm" id="btnAgregarAcepcionSublema">
                         <i class="fas fa-plus"></i>Agregar Acepción
                         </button>
                     </div>
@@ -150,9 +150,7 @@
             <div>
                 <div id="cuerpoSublemasAdicionales" name="cuerpoSublemasAdicionales" class="card-body">
                 </div>
-                <!-- Mensajes -->
-                <div id="mensaje_sublemas" class="mt-3"></div> 
-                <!--fin MEnsajes sublemas -->
+                
                 <div class="card-footer text-right">
                     <button type="submit" class="btn btn-success" id="btnGuardarSublemas" name="btnGuardarSublemas">
                         <i class="fas fa-plus"></i> Guardar
@@ -225,8 +223,6 @@
         const indexUrl = "{{ route('entradas_le.index') }}";
         const url_store_acepciones= "{{ route('acepciones_store') }}";
         const sublemaPrincipalUrl = "{{ route('entradas_le.guardarSublemaPrincipal') }}";
-        const deleteAcepcionesUrl = "{{ route('acepciones_destroy') }}";
-        const storeSublemasUrl = "{{ route('sublemas_store') }}";
     </script>
     
     <script>

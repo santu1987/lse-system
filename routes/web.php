@@ -54,6 +54,13 @@ Route::middleware(['auth'])->group(function () {
          * Acepciones
          */
         Route::post('/acepciones/store', [EntradaLEController::class, 'storeAcepciones'])->name('acepciones_store');
+        Route::delete('/acepciones/delete', [EntradaLEController::class, 'destroyAcepcion'])->name('acepciones_destroy');
+        /**
+         * Sublemas
+        */
+        Route::post('/sublemas/store', [EntradaLEController::class, 'storeSublemas'])->name('sublemas_store');
+
+        
         /**
          * 
          */

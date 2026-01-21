@@ -13,7 +13,7 @@ $(document).ready(function () {
             ]
     });
 
-    //guardar
+    //guardar entradas
     $('#entradaForm').on('submit', function (e) {
         e.preventDefault();
         console.log($(this).serialize());
@@ -53,7 +53,7 @@ $(document).ready(function () {
             }
         });
     });
-    //editar
+    //editar entradas
     $('#updateEntradaForm').on('submit', function (e) {
         e.preventDefault();
         alert("aqui, editar!");
@@ -94,7 +94,7 @@ $(document).ready(function () {
             }
         });
     });
-    // Eliminar
+    // Eliminar entradas
     $('.delete-btn').on('click', function () {
         let id = $(this).data('id');
         let url = $(this).data('url');
@@ -137,7 +137,7 @@ $(document).ready(function () {
     });
 
     let contador = $("table tbody tr").length; // cuenta filas iniciales
-
+    // Nueva fila de acepciones
     $("#btnNuevaFila").on("click", function() {
         
         contador++;
@@ -283,9 +283,10 @@ $(document).ready(function () {
     let contadorSublemas = 1;
     let contadorAcepcionesPorSublema  = [];
     contadorAcepcionesPorSublema[0] = 0;
+
     $("#btnAgregarAcepcionSublema").on("click", function() {
         const sublema = $("#inputSublema1").val().trim();
-
+        alert(sublema)
         if (sublema === "") {
             Swal.fire({
                 icon: 'warning',
@@ -305,10 +306,10 @@ $(document).ready(function () {
                     <thead class="thead-light">
                         <tr>
                             <th style="width: 40px">N°</th>
-                            <th>Acepción</th>
-                            <th>Ejemplo</th>
-                            <th>Categoría</th>
-                            <th>Fecha</th>
+                            <th>Acepción <span class="text-danger">* </span></th>
+                            <th>Ejemplo <span class="text-danger">* </span></th>
+                            <th>Categoría <span class="text-danger">* </span></th>
+                            <th>Fecha <span class="text-danger">* </span></th>
                             <th>Def. propia</th>
                             <th style="width: 100px">Acciones</th>
                         </tr>
@@ -347,6 +348,7 @@ $(document).ready(function () {
                     <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
                         <i class="fas fa-trash-alt"></i>
                     </button>
+                    <input type="text" id="sublema_id_acepcion_${contador}" name="sublema_id_acepcion_${contador}">
                 </td>
             </tr>
         `;
@@ -419,11 +421,11 @@ $(document).ready(function () {
                     <thead class="thead-light">
                         <tr>
                             <th style="width: 40px">N°</th>
-                            <th>Acepción</th>
-                            <th>Ejemplo</th>
-                            <th>Categoría</th>
-                            <th>Fecha</th>
-                            <th>Def. propia</th>
+                            <th>Acepción  <span class="text-danger">* </span></th>
+                            <th>Ejemplo  <span class="text-danger">* </span></th>
+                            <th>Categoría  <span class="text-danger">* </span></th>
+                            <th>Fecha  <span class="text-danger">* </span></th>
+                            <th>Def. propia </th>
                             <th style="width: 100px">Acciones</th>
                         </tr>
                     </thead>
@@ -499,6 +501,7 @@ $(document).ready(function () {
                             <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
+                            <input type="text" id="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}" name="sublema_id_acepcion_${contador}">
                         </td>
                     </tr>
                 `;
@@ -596,6 +599,9 @@ $(document).ready(function () {
             }
         });
     });*/
+    /**
+     * Para guardar los sublemas dinámicos
+     */
     $("#btnGuardarSublemas").on("click", function(e) {
         e.preventDefault();
 
@@ -664,28 +670,60 @@ $(document).ready(function () {
                     title: 'Guardado',
                     text: 'Los sublemas y sus acepciones se guardaron correctamente.'
                 });
+   
             /**
              * Recorremos los idsSublemas
              *  */
-            console.log(response.idsSublemas)
+            console.log(response.idsAcepciones)
             response.sublemas.forEach((sublemaObj, index) => {
+                console.log(response.sublemas);
                 const inputId = `idSublema${index + 1}`;
                 const input = document.getElementById(inputId);
                 if (input) {
                     input.value = sublemaObj.id; // asigna el ID del sublema
                 }
-            });
+                //para el id de las acepciones sublema_id_acepcion_${contador}
+                let ids = response.idsAcepciones || [];
+                let contador = 1; 
 
+                ids.forEach(function(item) {
+                    let idValue = (typeof item === 'object' && item !== null) ? (item.id ?? item) : item;
+                    // nombre esperado: sublema_id_acepcion_${contador}
+                    let inputName = `sublema_id_acepcion_${contador}`;
+                    // Si el input ya existe, le asignamos el valor
+                    let $input = $(`input[name="${inputName}"]`);
+                    if ($input.length) {
+                        $input.val(idValue);
+                    } /*else {
+                        // opcional: si no existe, lo creamos como hidden y lo añadimos al formulario
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', inputName)
+                            .val(idValue)
+                            .appendTo('#miFormulario'); // ajusta selector del form
+                    }*/ 
+                    contador++;
+                });
+
+            });
+            $('#mensajeSublemas').html('<div class="alert alert-success">Sublema guardado correctamente</div>');
             /**
              * 
              */
             },
             error: function(xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Hubo un problema al guardar. Intenta nuevamente.'
-                });
+                let errors = xhr.responseJSON?.errors;
+                let mensajeError = '<div class="alert alert-danger">Error al guardar</div>';
+
+                if (errors) {
+                    mensajeError += '<ul>';
+                    $.each(errors, function (key, value) {
+                        mensajeError += '<li>' + value[0] + '</li>';
+                    });
+                    mensajeError += '</ul>';
+                }
+
+                $('#mensajeSublemas').html(mensajeError);
             }
         });
     });

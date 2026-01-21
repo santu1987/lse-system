@@ -19,19 +19,20 @@
                     <div class="row">
                         <!-- Campo Entrada -->
                         <div class="form-group col-12">
-                            <label for="entrada">Entrada</label>
+                            <label for="entrada">Entrada</label><span class="text-danger">* :</span>
+
                             <input type="text" name="entrada" id="entrada" class="form-control" placeholder="Ingrese la entrada" required>
                         </div>
 
                         <!-- Campo Orden -->
                         <div class="form-group col-md-6 col-sm-12">
-                            <label for="orden">Orden</label>
+                            <label for="orden">Orden :</label>
                             <input type="number" name="orden" id="orden" class="form-control" min="1" placeholder="Número de orden">
                         </div>
 
                         <!-- Campo Fecha de Modificación -->
                         <div class="form-group col-md-6 col-sm-12">
-                            <label for="fecha_modificacion">Fecha de Modificación</label>
+                            <label for="fecha_modificacion">Fecha de Modificación</label><span class="text-danger">* :</span>
                             <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
@@ -85,10 +86,10 @@
                     <thead class="thead-light">
                         <tr>
                             <th style="width: 40px">N°</th>
-                            <th>Acepción</th>
-                            <th>Ejemplo</th>
+                            <th>Acepción <span class="text-danger">* </span></th>
+                            <th>Ejemplo <span class="text-danger">*</span></th>
                             <th>Categoría</th>
-                            <th>Fecha</th>
+                            <th>Fecha <span class="text-danger">* </span></th>
                             <th>Def. propia</th>
                             <th style="width: 100px">Acciones</th>
                         </tr>
@@ -178,9 +179,10 @@
                 </div>        
             </div>
             <div>
-                <div id="cuerpoSublemasAdicionales" name="cuerpoSublemasAdicionales" class="card-body">
-                </div>
-                
+            <div id="cuerpoSublemasAdicionales" name="cuerpoSublemasAdicionales" class="card-body">
+            </div>
+            <div id="mensajeSublemas">
+            </div>    
                 <div class="card-footer text-right">
                     <button type="submit" class="btn btn-success" id="btnGuardarSublemas" name="btnGuardarSublemas">
                         <i class="fas fa-plus"></i> Guardar

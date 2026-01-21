@@ -8,6 +8,7 @@ use App\Models\Acepciones;
 use App\Models\Sublema;
 use App\Models\SublemaAcepcion;
 use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon; 
 
 class EntradaLEController extends Controller
@@ -29,7 +30,7 @@ class EntradaLEController extends Controller
         return view('entradas.le.create', compact('acepciones', 'categorias'));
     }    
     /**
-     * Store
+     * Store de entradas
      */
     public function store(Request $request)
     {
@@ -37,6 +38,16 @@ class EntradaLEController extends Controller
             'entrada' => 'required|string|max:255',
             'orden' => 'nullable|integer|min:1',
             'fecha_modificacion' => 'required|date',
+        ], [
+            'entrada.required' => 'El campo entrada es obligatorio.',
+            'entrada.string' => 'El campo entrada debe ser texto.',
+            'entrada.max' => 'El campo entrada no puede tener más de :max caracteres.',
+
+            'orden.integer' => 'El campo orden debe ser un número entero.',
+            'orden.min' => 'El campo orden debe ser como mínimo :min.',
+
+            'fecha_modificacion.required' => 'La fecha de modificación es obligatoria.',
+            'fecha_modificacion.date' => 'La fecha de modificación debe tener un formato de fecha válido.',
         ]);
 
         $data = $request->all();
@@ -65,7 +76,7 @@ class EntradaLEController extends Controller
 
     }
     /**
-     * Edit
+     * Edit de entradas
      */
     public function edit($id)
     {
@@ -75,7 +86,7 @@ class EntradaLEController extends Controller
     }
 
     /**
-     * Update
+     * Update de entradas
      * 
      */
     public function update(Request $request, $id)
@@ -97,7 +108,7 @@ class EntradaLEController extends Controller
         return response()->json(['success' => true, 'entrada' => $entrada]);
     }
     /**
-     * Destroy
+     * Destroy de entradas
      */
     public function destroy($id)
     {
@@ -126,10 +137,40 @@ class EntradaLEController extends Controller
             'acepciones.*.id_entrada' => 'required|integer|exists:lse_entradas_lengua_espanola,id',
             'acepciones.*.orden' => 'nullable|integer|min:1',
             'acepciones.*.acepcion' => 'required|string|max:255',
-            'acepciones.*.ejemplo' => 'nullable|string',
-            'acepciones.*.id_categoria' => 'nullable|integer|exists:lse_categorias,id',
+            'acepciones.*.ejemplo' => 'required|string',
+            'acepciones.*.id_categoria' => 'required|integer|exists:lse_categorias,id',
             'acepciones.*.fecha_modificacion' => 'required|date',
             'acepciones.*.definicion_propia' => 'boolean',
+        ],
+        [ 
+            'acepciones.required' => 'Debe enviar al menos una acepción.',
+            'acepciones.array' => 'El campo de acepciones debe ser un arreglo.',
+
+            'acepciones.*.id.integer' => 'El identificador de la acepción debe ser un número entero.',
+            'acepciones.*.id.exists' => 'La acepción indicada no existe en la base de datos.',
+
+            'acepciones.*.id_entrada.required' => 'El campo id_entrada es obligatorio para cada acepción.',
+            'acepciones.*.id_entrada.integer' => 'El id_entrada debe ser un número entero.',
+            'acepciones.*.id_entrada.exists' => 'La entrada asociada no existe.',
+
+            'acepciones.*.orden.integer' => 'El orden debe ser un número entero.',
+            'acepciones.*.orden.min' => 'El orden debe ser como mínimo :min.',
+
+            'acepciones.*.acepcion.required' => 'La acepción es obligatoria.',
+            'acepciones.*.acepcion.string' => 'La acepción debe ser texto.',
+            'acepciones.*.acepcion.max' => 'La acepción no puede tener más de :max caracteres.',
+
+            'acepciones.*.ejemplo.required' => 'El ejemplo es obligatorio.',
+            'acepciones.*.ejemplo.string' => 'El ejemplo debe ser texto.',
+
+            'acepciones.*.id_categoria.required' => 'La categoría es obligatoria.',
+            'acepciones.*.id_categoria.integer' => 'La categoría debe ser un número entero.',
+            'acepciones.*.id_categoria.exists' => 'La categoría seleccionada no existe.',
+
+            'acepciones.*.fecha_modificacion.required' => 'La fecha de modificación es obligatoria.',
+            'acepciones.*.fecha_modificacion.date' => 'La fecha de modificación debe tener un formato de fecha válido.',
+
+            'acepciones.*.definicion_propia.boolean' => 'El valor de definición propia debe ser verdadero o falso.',
         ]);
 
         $acepcionesGuardadas = [];
@@ -197,6 +238,59 @@ class EntradaLEController extends Controller
      * GUardar sublmea principal
      */
     public function guardarSublema(Request $request){
+        $rules = [
+            'id_entrada' => 'required|integer|exists:lse_entradas_lengua_espanola,id',
+            'sublemas' => 'required|array',
+            'sublemas.*.sublema' => 'required|string|max:255',
+            'sublemas.*.acepciones' => 'required|array|min:1',
+
+            'sublemas.*.acepciones.*.acepcion' => 'required|string|max:255',
+            'sublemas.*.acepciones.*.ejemplo' => 'required|string',
+            'sublemas.*.acepciones.*.categoria' => 'required|integer|exists:lse_categorias,id',
+            'sublemas.*.acepciones.*.fecha' => 'required|date',
+        ];
+
+        $messages = [
+            'id_entrada.required' => 'El campo id_entrada es obligatorio.',
+            'id_entrada.integer' => 'El id_entrada debe ser un número entero.',
+            'id_entrada.exists' => 'La entrada indicada no existe.',
+
+            'sublemas.required' => 'Debe enviar al menos un sublema.',
+            'sublemas.array' => 'El campo sublemas debe ser un arreglo.',
+
+            'sublemas.*.sublema.required' => 'El nombre del sublema es obligatorio.',
+            'sublemas.*.sublema.string' => 'El sublema debe ser texto.',
+            'sublemas.*.sublema.max' => 'El sublema no puede tener más de :max caracteres.',
+
+            'sublemas.*.acepciones.required' => 'Cada sublema debe contener al menos una acepción.',
+            'sublemas.*.acepciones.array' => 'El campo acepciones debe ser un arreglo.',
+            'sublemas.*.acepciones.min' => 'Cada sublema debe tener al menos :min acepción.',
+
+            'sublemas.*.acepciones.*.acepcion.required' => 'La acepción es obligatoria.',
+            'sublemas.*.acepciones.*.acepcion.string' => 'La acepción debe ser texto.',
+            'sublemas.*.acepciones.*.acepcion.max' => 'La acepción no puede tener más de :max caracteres.',
+
+            'sublemas.*.acepciones.*.ejemplo.required' => 'El ejemplo es obligatorio.',
+            'sublemas.*.acepciones.*.ejemplo.string' => 'El ejemplo debe ser texto.',
+
+            'sublemas.*.acepciones.*.categoria.required' => 'La categoría es obligatoria.',
+            'sublemas.*.acepciones.*.categoria.integer' => 'La categoría debe ser un número entero.',
+            'sublemas.*.acepciones.*.categoria.exists' => 'La categoría seleccionada no existe.',
+
+            'sublemas.*.acepciones.*.fecha.required' => 'La fecha de modificación es obligatoria.',
+            'sublemas.*.acepciones.*.fecha.date' => 'La fecha debe tener un formato de fecha válido (YYYY-MM-DD).',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+
         $idEntrada = $request->input('id_entrada');
         $sublemasData = $request->input('sublemas', []); // ahora recibes un array de sublemas
 

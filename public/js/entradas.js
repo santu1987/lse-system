@@ -348,7 +348,7 @@ $(document).ready(function () {
                     <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-                    <input type="text" id="sublema_id_acepcion_${contador}" name="sublema_id_acepcion_${contador}">
+                    <input type="text" id="sublema_id_acepcion_1_${contadorAcepcionesPorSublema[0]}" name="sublema_id_acepcion_1_${contadorAcepcionesPorSublema[0]}">
                 </td>
             </tr>
         `;
@@ -501,7 +501,7 @@ $(document).ready(function () {
                             <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
-                            <input type="text" id="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}" name="sublema_id_acepcion_${contador}">
+                            <input type="text" id="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}" name="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}">
                         </td>
                     </tr>
                 `;
@@ -620,7 +620,6 @@ $(document).ready(function () {
                 });
                 return false; // corta el each
             }
-            console.log("sublemaId: "+sublemaId)
             // Recorremos las acepciones de este sublema
             let acepciones = [];
             $(`#tbody_sublema_${sublemaId} tr`).each(function() {
@@ -629,22 +628,21 @@ $(document).ready(function () {
                 let categoria = $(this).find(`select[name^='sublema_categoria_${sublemaId}_']`).val();
                 let fecha    = $(this).find(`input[name^='sublema_fecha_${sublemaId}_']`).val();
                 let propia   = $(this).find(`input[name^='sublema_propia_${sublemaId}_']`).is(":checked");
-
+                let id_acepcion = $(this).find(`input[name^='sublema_id_acepcion_${sublemaId}_']`).val();
                 acepciones.push({
                     acepcion: acepcion,
                     ejemplo: ejemplo,
                     categoria: categoria,
                     fecha: fecha,
-                    propia: propia
+                    propia: propia,
+                    id: id_acepcion
                 });
-                console.log(acepciones);
             });
 
             sublemas.push({
                 sublema: sublemaTexto,
                 acepciones: acepciones
             });
-            console.log(sublemas);
 
         });
 
@@ -674,7 +672,7 @@ $(document).ready(function () {
             /**
              * Recorremos los idsSublemas
              *  */
-            console.log(response.idsAcepciones)
+            /*
             response.sublemas.forEach((sublemaObj, index) => {
                 console.log(response.sublemas);
                 const inputId = `idSublema${index + 1}`;
@@ -689,24 +687,76 @@ $(document).ready(function () {
                 ids.forEach(function(item) {
                     let idValue = (typeof item === 'object' && item !== null) ? (item.id ?? item) : item;
                     // nombre esperado: sublema_id_acepcion_${contador}
-                    let inputName = `sublema_id_acepcion_${contador}`;
+                    let inputName = `sublema_id_acepcion_${index + 1}_${contador}`;
                     // Si el input ya existe, le asignamos el valor
                     let $input = $(`input[name="${inputName}"]`);
                     if ($input.length) {
                         $input.val(idValue);
-                    } /*else {
-                        // opcional: si no existe, lo creamos como hidden y lo añadimos al formulario
-                        $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', inputName)
-                            .val(idValue)
-                            .appendTo('#miFormulario'); // ajusta selector del form
-                    }*/ 
+                    } 
+                    contador++;
+                });
+
+            });*/
+             response.sublemas.forEach((sublemaObj, index) => {
+                console.log(response.sublemas);
+                const inputId = `idSublema${index + 1}`;
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.value = sublemaObj.id; // asigna el ID del sublema
+                }
+                //para el id de las acepciones sublema_id_acepcion_${contador}
+                let contador = 1; 
+                console.log(response.sublemas_obj[index].acepciones_sublema);
+                let acepciones = Array.isArray(response.sublemas_obj[index].acepciones_sublema)
+                    ? response.sublemas_obj[index].acepciones_sublema
+                    : [response.sublemas_obj[index].acepciones_sublema]; 
+
+                acepciones.forEach(function(item) {
+
+                    // nombre esperado: sublema_id_acepcion_${contador}
+                    let inputName = `sublema_id_acepcion_${index + 1}_${contador}`;
+                    // Si el input ya existe, le asignamos el valor
+                    let $input = $(`input[name="${inputName}"]`);
+                    console.log(`sublema_id_acepcion_${index + 1}_${contador}`);
+                    console.log(item.id)
+                    if ($input.length) {
+                        $input.val(item.id);
+                    } 
                     contador++;
                 });
 
             });
-            $('#mensajeSublemas').html('<div class="alert alert-success">Sublema guardado correctamente</div>');
+            /*
+            response.sublemas_obj.forEach((sublemaObj, index) => {
+                // ID del sublema
+                const inputId = `idSublema${index + 1}`;
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.value = sublemaObj.sublema.id; // ⚠️ está dentro de sublemaObj.sublema
+                }
+
+                // Ahora recorremos las acepciones de ese sublema
+                // Si tu backend devuelve un array de acepciones, ajusta aquí
+                let acepciones = Array.isArray(sublemaObj.acepciones_sublema)
+                    ? sublemaObj.acepciones_sublema
+                    : [sublemaObj.acepciones_sublema]; // forzamos a array
+
+                let contador = 1;
+                acepciones.forEach(acep => {
+                    let idValue = acep.id; // el id de la acepción
+                    let inputName = `sublema_id_acepcion_${index + 1}_${contador}`;
+                    console.log(inputName);
+                    let $input = $(`input[name="${inputName}"]`);
+                    if ($input.length) {
+                        $input.val(idValue);
+                    } 
+                    contador++;
+                });
+            });*/
+                $('#mensajeSublemas').html('<div class="alert alert-success">Sublema guardado correctamente</div>');
+                setTimeout(function () {
+                            $('#mensaje').html('');
+                }, 10000); // 10000 ms = 10 segundos
             /**
              * 
              */

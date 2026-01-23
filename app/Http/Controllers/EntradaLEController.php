@@ -315,6 +315,7 @@ class EntradaLEController extends Controller
             if (!empty($sublemaData['acepciones']) && is_array($sublemaData['acepciones'])) {
                 foreach ($sublemaData['acepciones'] as $acepcionData) {
                     $acepciones[] = [
+                        'id'                => $acepcionData['id'] ?? null,
                         'acepcion'           => $acepcionData['acepcion'],
                         'ejemplo'            => $acepcionData['ejemplo'],
                         'id_categoria'       => $acepcionData['categoria'],
@@ -327,15 +328,34 @@ class EntradaLEController extends Controller
             }
 
             if (!empty($acepciones)) {
+                $acepcionesSub = [];
                 foreach ($acepciones as $acepcionData) {
-                    $sublema_acepcion = SublemaAcepcion::create($acepcionData);
+                    
+                    //--
+                    if (!empty($acepcionData['id'])) {
+                        // si viene id, actualiza o crea
+                        $sublema_acepcion = SublemaAcepcion::updateOrCreate(
+                            ['id' => $acepcionData['id']], // condición
+                            $acepcionData                  // datos a actualizar
+                        );
+                    } else {
+                        // si no viene id, crea nuevo
+                        $sublema_acepcion = SublemaAcepcion::create($acepcionData);
+                    }
+                    //---
                     $idsAcepciones[] = $sublema_acepcion->id;
+                    $acepcionesSub[] =  $sublema_acepcion;
                 }
                 $totalAcepciones += count($acepciones);
 
             }
             
             $sublemasGuardados[] = $sublema;
+            $sublemasObjetos[]=[
+                                'sublema' => $sublema,
+                                'acepciones_sublema'=>$acepcionesSub
+
+            ];
         }
 
         //  Actualizar la tabla EntradaLE con los contadores
@@ -350,6 +370,7 @@ class EntradaLEController extends Controller
             'success' => true,
             'message' => 'Sublemas y acepciones guardados correctamente',
             'sublemas' => $sublemasGuardados,
+            'sublemas_obj'=>$sublemasObjetos,
             'num_sublemas' => $totalSublemas,
             'num_acepciones' => $totalAcepciones,
             'idsSublemas' => $idsSublemas,

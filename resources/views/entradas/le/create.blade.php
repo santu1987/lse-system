@@ -66,7 +66,7 @@
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar acepción...">
+                            <input type="text" class="form-control" placeholder="Búsqueda predictiva de acepción">
                             <div class="input-group-append">
                                 <button class="btn btn-info" type="button">
                                     <i class="fas fa-search"></i> Consultar
@@ -148,7 +148,7 @@
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Buscar sublema...">
+                            <input type="text" class="form-control" placeholder="Búsqueda predictiva de sublema...">
                             <div class="input-group-append">
                                 <button class="btn btn-info" type="button" id="buscarSublema" name="buscarSublema">
                                     <i class="fas fa-search"></i> Consultar

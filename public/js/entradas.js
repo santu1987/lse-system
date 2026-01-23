@@ -173,10 +173,10 @@ $(document).ready(function () {
                     <input type="checkbox" name="def_propia_${contador}">
                 </td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm btnEliminarFila">
+                    <button type="button" class="btn btn-danger btn-sm btnEliminarFilaAcepciones">
                         <i class="fas fa-trash-alt"></i> 
                     </button>
-                    <input type="text" id="idAcepcion_${contador}" name="idAcepcion_${contador}">
+                    <input type="hidden" id="idAcepcion_${contador}" name="idAcepcion_${contador}">
                 </td>
             </tr>
         `;
@@ -273,7 +273,7 @@ $(document).ready(function () {
         }); 
     });
     /**
-     * Agregar acepciones a sublemas
+     * Agregar acepciones a sublemas primera fila
      * **/
     let contadorAcepcionesSublema = 0;
     let opciones = '<option value="">Seleccionar</option>';
@@ -345,7 +345,7 @@ $(document).ready(function () {
                     <input type="checkbox" name="sublema_propia_1_${contadorAcepcionesPorSublema[0]}">
                 </td>
                 <td class="text-center">
-                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
+                    <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcionSublema">
                         <i class="fas fa-trash-alt"></i>
                     </button>
                     <input type="text" id="sublema_id_acepcion_1_${contadorAcepcionesPorSublema[0]}" name="sublema_id_acepcion_1_${contadorAcepcionesPorSublema[0]}">
@@ -387,7 +387,7 @@ $(document).ready(function () {
                         name="inputSublema${contadorSublemas}" 
                         class="form-control form-control-sm mr-2" 
                         placeholder="Escribe el sublema...">
-                    <input type="text" name="idSublema${contadorSublemas}" id="idSublema${contadorSublemas}">    
+                    <input type="hidden" name="idSublema${contadorSublemas}" id="idSublema${contadorSublemas}">    
                 </div>
                 <div class="col-md-4">
                     <button type="button" 
@@ -755,7 +755,7 @@ $(document).ready(function () {
             });*/
                 $('#mensajeSublemas').html('<div class="alert alert-success">Sublema guardado correctamente</div>');
                 setTimeout(function () {
-                            $('#mensaje').html('');
+                            $('#mensajeSublemas').html('');
                 }, 10000); // 10000 ms = 10 segundos
             /**
              * 
@@ -777,5 +777,81 @@ $(document).ready(function () {
             }
         });
     });
+    /**
+     * Eliminar filas acepciones
+     */
+    $(document).on('click', '.btnEliminarFilaAcepciones', function () {
+        let $fila = $(this).closest('tr');
+        let idAcepcion = $fila.find('input[type="hidden"][id^="idAcepcion_"]').val();
+
+        if (idAcepcion && idAcepcion !== "") {
+            $.ajax({
+                url: url_delete_acepciones, // tu ruta Laravel (POST o DELETE)
+                type: 'POST',                // si usas DELETE, ajusta aquí
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    id: idAcepcion
+                },
+                success: function (resp) {
+                    $fila.remove();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'Acepción eliminada con éxito.'
+                    });
+   
+                },
+                error: function (xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar la acepción'
+                    });
+                    console.error(xhr.responseText);
+                }
+            });
+        } else {
+            $fila.remove();
+        }
+    });
+    $(document).on('click', '.btnEliminarAcepcionSublema', function () {
+        let $fila = $(this).closest('tr');
+
+        // Obtenemos el id de la acepción desde el input hidden/text
+        let idAcepcion = $fila.find('input[id^="sublema_id_acepcion_"]').val();
+
+        if (idAcepcion && idAcepcion !== "") {
+            // Si hay id, mandamos al backend para eliminar
+            $.ajax({
+                url: url_delete_acepciones_sublemas,
+                type: 'POST', // o DELETE si lo definiste así
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    id: idAcepcion
+                },
+                success: function (resp) {
+                    // Si el backend confirma, quitamos la fila
+                    $fila.remove();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'Acepción eliminada con éxito.'
+                    });
+                },
+                error: function (xhr) {
+                     Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error al eliminar la acepción'
+                    });
+                    console.error(xhr.responseText);
+                }
+            });
+        } else {
+            // Si no hay id (todavía no guardada en BD), solo quitamos la fila
+            $fila.remove();
+        }
+    });
+
 
 });

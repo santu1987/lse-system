@@ -36,7 +36,7 @@
                             <input type="date" name="fecha_modificacion" id="fecha_modificacion" class="form-control" required value="{{ date('Y-m-d') }}">
                         </div>
                     </div>
-                    <input type="text" id="idEntrada" name="idEntrada">
+                    <input type="hidden" id="idEntrada" name="idEntrada">
                 </div>
 
                 <!-- Footer con botones -->
@@ -167,7 +167,7 @@
                 <div class="row mb-3">
                     <div class="col-md-8">
                         <input type="text" id="inputSublema1" class="form-control form-control-sm mr-2" placeholder="Escribe el sublema...">
-                        <input type="text" name="idSublema1" id="idSublema1">
+                        <input type="hidden" name="idSublema1" id="idSublema1">
                     </div>
                     <div class="col-md-4">
                         <button type="button" class="btn btn-info btn-sm" id="btnAgregarAcepcionSublema">
@@ -201,6 +201,8 @@
         const indexUrl = "{{ route('entradas_le.index') }}";
         const url_store_acepciones= "{{ route('acepciones_store') }}";
         const sublemaPrincipalUrl = "{{ route('entradas_le.guardarSublemaPrincipal') }}";
+        const url_delete_acepciones = "{{ route('acepciones_delete') }}";
+        const url_delete_acepciones_sublemas =  "{{ route('acepciones_sublemas_delete') }}";
     </script>
     
     <script>

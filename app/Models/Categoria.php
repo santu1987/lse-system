@@ -20,6 +20,7 @@ class Categoria extends Model
     public $timestamps = false;
 
     // Relación inversa: una categoría tiene muchas acepciones
+    /*
     public function acepciones()
     {
         return $this->hasMany(Acepciones::class, 'id_categoria');
@@ -29,6 +30,6 @@ class Categoria extends Model
     public function sublemasAcepciones()
     {
         return $this->hasMany(SublemaAcepcion::class, 'id_categoria');
-    }
+    }*/
 
 }

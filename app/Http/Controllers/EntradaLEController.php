@@ -113,7 +113,7 @@ class EntradaLEController extends Controller
     public function destroy($id)
     {
         $entrada = EntradaLE::findOrFail($id);
-        $entrada->delete(); // 👈 marca deleted_at
+        $entrada->delete(); // marca deleted_at
         return response()->json(['success' => true]);
     }
     /**
@@ -415,4 +415,30 @@ class EntradaLEController extends Controller
             'message' => 'Sublemas y acepciones guardados correctamente',
             'sublemas' => $sublemasGuardados,
         ]);*/
+
+        public function deleteAcepciones(Request $request ){
+            $id = $request->input('id');
+            // Buscar la acepción por ID
+            $acepcion = Acepciones::find($id);
+
+            if ($acepcion) {
+                $acepcion->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Acepción eliminada correctamente',
+                    'id' => $id
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Acepción no encontrada'
+            ], 404);
+
+        }
+
+        public function deleteAcepcionesSublemas(Request $request){
+            dd($request);
+        }
 }

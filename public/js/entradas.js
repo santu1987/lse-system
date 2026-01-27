@@ -498,7 +498,7 @@ $(document).ready(function () {
                                 name="sublema_propia_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}">
                         </td>
                         <td class="text-center">
-                            <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcion">
+                            <button type="button" class="btn btn-danger btn-sm btnEliminarAcepcionSublema">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                             <input type="text" id="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}" name="sublema_id_acepcion_${sublemaTempId}_${contadorAcepcionesPorSublema[sublemaTempId]}">
@@ -815,43 +815,90 @@ $(document).ready(function () {
         }
     });
     $(document).on('click', '.btnEliminarAcepcionSublema', function () {
+        alert("aqui")
         let $fila = $(this).closest('tr');
+        let $tbody = $fila.closest('tbody'); // Obtenemos el contenedor para reindexar después
+        let sublemaIdMatch = $tbody.attr('id').match(/\d+/); // Extraemos el ID del sublema del ID del tbody
+        let sublemaId = sublemaIdMatch ? sublemaIdMatch[0] : null;
 
         // Obtenemos el id de la acepción desde el input hidden/text
         let idAcepcion = $fila.find('input[id^="sublema_id_acepcion_"]').val();
 
         if (idAcepcion && idAcepcion !== "") {
-            // Si hay id, mandamos al backend para eliminar
-            $.ajax({
-                url: url_delete_acepciones_sublemas,
-                type: 'POST', // o DELETE si lo definiste así
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content'),
-                    id: idAcepcion
-                },
-                success: function (resp) {
-                    // Si el backend confirma, quitamos la fila
-                    $fila.remove();
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Eliminado',
-                        text: 'Acepción eliminada con éxito.'
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "Se eliminará permanentemente de la base de datos",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si hay id, mandamos al backend para eliminar
+                    $.ajax({
+                        url: url_delete_acepciones_sublemas,
+                        type: 'POST', // o DELETE si lo definiste así
+                        data: {
+                            _token: $('meta[name="csrf-token"]').attr('content'),
+                            id: idAcepcion
+                        },
+                        success: function (resp) {
+                            // Si el backend confirma, quitamos la fila
+                            $fila.remove();
+                            if(sublemaId) reindexarAcepciones(sublemaId); // 
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Eliminado',
+                                text: 'Acepción eliminada con éxito.'
+                            });
+                        },
+                        error: function (xhr) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Error al eliminar la acepción'
+                            });
+                            console.error(xhr.responseText);
+                        }
                     });
-                },
-                error: function (xhr) {
-                     Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al eliminar la acepción'
-                    });
-                    console.error(xhr.responseText);
                 }
-            });
+            });    
         } else {
             // Si no hay id (todavía no guardada en BD), solo quitamos la fila
             $fila.remove();
         }
     });
+    /**
+     * Función para renombrar los inputs de las acepciones de un sublema específico
+     */
+    function reindexarAcepciones(sublemaId) {
+        // Recorremos cada fila del tbody del sublema actual
+        $(`#tbody_sublema_${sublemaId} tr`).each(function (index) {
+            let nuevoContador = index + 1; // El nuevo índice (1, 2, 3...)
 
-
+            // Buscamos todos los inputs y selects que tengan el patrón de nombre
+            $(this).find('input, select').each(function () {
+                let name = $(this).attr('name');
+                if (name) {
+                    // Expresión regular para cambiar el último número: campo_sublema_indice
+                    // Ejemplo: sublema_acepcion_1_3 -> sublema_acepcion_1_2
+                    let partes = name.split('_');
+                    if (partes.length >= 4) {
+                        // Reconstruimos el nombre manteniendo el prefijo y el ID del sublema
+                        // prefijo_campo_sublemaId_nuevoContador
+                        partes[partes.length - 1] = nuevoContador;
+                        let nuevoNombre = partes.join('_');
+                        
+                        $(this).attr('name', nuevoNombre);
+                        
+                        // También actualizamos el ID si lo usas para algo (opcional)
+                        if ($(this).attr('id')) {
+                            $(this).attr('id', nuevoNombre);
+                        }
+                    }
+                }
+            });
+            
+            console.log(`Fila reindexada a ${nuevoContador} para el sublema ${sublemaId}`);
+        });
+    }
 });

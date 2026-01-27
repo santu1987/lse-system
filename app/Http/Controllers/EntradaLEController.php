@@ -439,6 +439,21 @@ class EntradaLEController extends Controller
         }
 
         public function deleteAcepcionesSublemas(Request $request){
-            dd($request);
+            //-
+            try {
+                $acepcion = SublemaAcepcion::findOrFail($request->id);
+                $acepcion->delete();
+
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Acepción eliminada correctamente.'
+                ]);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No se pudo eliminar: ' . $e->getMessage()
+                ], 500);
+            }
+            //--
         }
 }
